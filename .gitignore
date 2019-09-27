@@ -51,5 +51,9 @@ Module.symvers
 Mkfile.old
 dkms.conf
 cmake-build-debug
+
+cmake-build-debug/
+.idea/*
+*.tmp
 .venv/*
-vnev/*
+venv/*

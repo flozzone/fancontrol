@@ -20,17 +20,18 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "cmsis_os.h"
 #include "i2c.h"
 #include "rtc.h"
 #include "spi.h"
+#include "tim.h"
 #include "usart.h"
+#include "usb.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include <stdio.h>
-#include "OLED_Driver.h"
-#include "OLED_GUI.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -56,6 +57,7 @@
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+void MX_FREERTOS_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -98,68 +100,30 @@ int main(void)
   MX_RTC_Init();
   MX_SPI1_Init();
   MX_USART2_UART_Init();
+  MX_TIM2_Init();
+  MX_TIM3_Init();
+  MX_USB_PCD_Init();
   /* USER CODE BEGIN 2 */
-    printf("**********1.5inch OLED Demo**********\r\n");
-    System_Init();
 
-    printf("OLED_Init()...\r\n");
-    OLED_Init(SCAN_DIR_DFT );//SCAN_DIR_DFT = D2U_L2R
 
-    printf("OLED_Show()...\r\n");
-    GUI_Show();
 
-    OLED_Clear(OLED_BACKGROUND);//OLED_BACKGROUND
-    OLED_Display();
 
-    printf("Show Pic\r\n");
-    GUI_Disbitmap(0  , 2, Signal816  , 16, 8);
-    GUI_Disbitmap(24 , 2, Bluetooth88, 8 , 8);
-    GUI_Disbitmap(40 , 2, Msg816     , 16, 8);
-    GUI_Disbitmap(64 , 2, GPRS88     , 8 , 8);
-    GUI_Disbitmap(90 , 2, Alarm88    , 8 , 8);
-    GUI_Disbitmap(112, 2, Bat816     , 16, 8);
-
-    printf("Show 16 Gray Map\r\n");
-    GUI_DisGrayMap(0, 73, gImage_flower);
-
-    GUI_DisString_EN(0 , 52, "MUSIC", &Font12, FONT_BACKGROUND, WHITE);
-    GUI_DisString_EN(48, 52, "MENU" , &Font12, FONT_BACKGROUND, WHITE);
-    GUI_DisString_EN(90, 52, "PHONE", &Font12, FONT_BACKGROUND, WHITE);
-
-    OLED_Display();
-
-    printf("Show time\r\n");
   /* USER CODE END 2 */
+
+  /* Call init function for freertos objects (in freertos.c) */
+  MX_FREERTOS_Init(); 
+
+  /* Start scheduler */
+  osKernelStart();
+  
+  /* We should never get here as control is now taken by the scheduler */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
     /* USER CODE END WHILE */
-      uint8_t sec = 0;
-      DEV_TIME sDev_time;
-      sDev_time.Hour = 12;
-      sDev_time.Min = 34;
-      sDev_time.Sec = 56;
-      for (;;) {
-          sec++;
-          sDev_time.Sec = sec;
-          if (sec == 60) {
-              sDev_time.Min = sDev_time.Min + 1;
-              sec = 0;
-              if (sDev_time.Min == 60) {
-                  sDev_time.Hour =  sDev_time.Hour + 1;
-                  sDev_time.Min = 0;
-                  if (sDev_time.Hour == 24) {
-                      sDev_time.Hour = 0;
-                      sDev_time.Min = 0;
-                      sDev_time.Sec = 0;
-                  }
-              }
-          }
-          GUI_Showtime(0, 22, 127, 47, &sDev_time, WHITE);
-          Driver_Delay_ms(1000);//Analog clock 1s
-      }
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -202,8 +166,9 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_RTC;
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_RTC|RCC_PERIPHCLK_USB;
   PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
+  PeriphClkInit.UsbClockSelection = RCC_USBCLKSOURCE_PLL_DIV1_5;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     Error_Handler();
@@ -213,6 +178,27 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 
 /* USER CODE END 4 */
+
+/**
+  * @brief  Period elapsed callback in non blocking mode
+  * @note   This function is called  when TIM1 interrupt took place, inside
+  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+  * a global variable "uwTick" used as application time base.
+  * @param  htim : TIM handle
+  * @retval None
+  */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  /* USER CODE BEGIN Callback 0 */
+
+  /* USER CODE END Callback 0 */
+  if (htim->Instance == TIM1) {
+    HAL_IncTick();
+  }
+  /* USER CODE BEGIN Callback 1 */
+
+  /* USER CODE END Callback 1 */
+}
 
 /**
   * @brief  This function is executed in case of error occurrence.

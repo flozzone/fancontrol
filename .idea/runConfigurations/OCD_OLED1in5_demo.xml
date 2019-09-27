@@ -1,8 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration name="OCD OLED1in5-demo" type="com.jetbrains.cidr.embedded.openocd.conf.type" factoryName="com.jetbrains.cidr.embedded.openocd.conf.factory" PASS_PARENT_ENVS_2="true" PROJECT_NAME="fancontrol" TARGET_NAME="OLED1in5-demo.elf" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="fancontrol" RUN_TARGET_NAME="OLED1in5-demo.elf">
-    <openocd gdb-port="3333" telnet-port="4444" reset-type="INIT" download-type="ALWAYS" />
-    <method v="2">
-      <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-    </method>
-  </configuration>
-</component>
