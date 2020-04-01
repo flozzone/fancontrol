@@ -280,7 +280,11 @@ void app_run(void) {
             long_pressed_cnt = 1;
         }
 
-        vTaskDelay(200);//Analog clock 1s
+        if (!key_pressed) {
+            vTaskDelay(100);//Analog clock 1s
+        } else {
+            vTaskDelay(200);//Analog clock 1s
+        }
     }
 }
 
