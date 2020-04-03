@@ -161,7 +161,7 @@ void setup(void)
   pinMode(BOOT0, OUTPUT);
   pinMode(NRST, OUTPUT);
 
-  //digitalWrite(BOOT0, HIGH);
+  digitalWrite(BOOT0, HIGH);
   digitalWrite(NRST, HIGH);
 
   WiFi.mode(WIFI_STA);
