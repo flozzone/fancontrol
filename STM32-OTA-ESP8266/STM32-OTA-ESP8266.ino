@@ -59,7 +59,6 @@
 
 #define NRST 0
 #define BOOT0 2
-#define LED 4
 
 
 const String STM32_CHIPNAME[8] = {
@@ -252,7 +251,6 @@ void setup(void)
   Serial.begin(115200, SERIAL_8E1);
   pinMode(BOOT0, OUTPUT);
   pinMode(NRST, OUTPUT);
-  pinMode(LED, OUTPUT);
 
   digitalWrite(NRST, HIGH);
 
@@ -261,16 +259,10 @@ void setup(void)
   digitalWrite(BOOT0, HIGH);
   delay(100);
   digitalWrite(NRST, LOW);
-  digitalWrite(LED, LOW);
   delay(50);
   digitalWrite(NRST, HIGH);
   delay(500);
 #endif /* SPECIAL_INIT */
-
-  for ( int i = 0; i < 3; i++) {
-    digitalWrite(LED, !digitalRead(LED));
-    delay(100);
-  }
 
   WiFi.mode(WIFI_STA);
   WiFi.config(local_IP, gateway, subnet);
@@ -389,26 +381,16 @@ void FlashMode()  {    //Tested  Change to flashmode
   digitalWrite(BOOT0, HIGH);
   delay(100);
   digitalWrite(NRST, LOW);
-  digitalWrite(LED, LOW);
   delay(50);
   digitalWrite(NRST, HIGH);
   delay(200);
-  for ( int i = 0; i < 3; i++) {
-    digitalWrite(LED, !digitalRead(LED));
-    delay(100);
-  }
 }
 
 void RunMode()  {    //Tested  Change to runmode
   digitalWrite(BOOT0, LOW);
   delay(100);
   digitalWrite(NRST, LOW);
-  digitalWrite(LED, LOW);
   delay(50);
   digitalWrite(NRST, HIGH);
   delay(200);
-  for ( int i = 0; i < 3; i++) {
-    digitalWrite(LED, !digitalRead(LED));
-    delay(100);
-  }
 }
