@@ -111,7 +111,7 @@ void sendJsonFAIL(const char *msg) {
 
 void handleFlash()
 {
-  String FileName, flashwr;
+  bool success = false;
   int lastbuf = 0;
   uint8_t cflag, fnum = 256;
 
@@ -122,7 +122,6 @@ void handleFlash()
   } else {
     bini = fsUploadFile.size() / 256;
     lastbuf = fsUploadFile.size() % 256;
-    flashwr = String(bini) + "-" + String(lastbuf) + "<br>";
     for (int i = 0; i < bini; i++) {
       fsUploadFile.read(binread, 256);
       stm32SendCommand(STM32WR);
@@ -131,9 +130,7 @@ void handleFlash()
       if (cflag == STM32ACK)
         if (stm32Address(STM32STADDR + (256 * i)) == STM32ACK) {
           if (stm32SendData(binread, 255) == STM32ACK) {
-            flashwr += ".";
-          } else {
-            flashwr = "Error";
+            success = true;
           }
         }
     }
@@ -143,13 +140,17 @@ void handleFlash()
     cflag = Serial.read();
     if (cflag == STM32ACK) {
       if (stm32Address(STM32STADDR + (256 * bini)) == STM32ACK) {
-        if (stm32SendData(binread, lastbuf) == STM32ACK)
-          flashwr += "<br>Finished<br>";
-        else flashwr = "Error";
+        if (stm32SendData(binread, lastbuf) == STM32ACK) {
+          success = true;
+        }
       }
     }
     fsUploadFile.close();
-    sendJsonOK("Programming");
+    if (success) {
+      sendJsonOK("Programming");
+    } else {
+      sendJsonFAIL("Failed flashing");
+    }
   }
 }
 
