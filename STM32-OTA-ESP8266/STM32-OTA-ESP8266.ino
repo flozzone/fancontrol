@@ -279,17 +279,17 @@ void loop(void) {
 #endif /* WITH_MDNS */
 }
 
-void FlashMode()  {    //Tested  Change to flashmode
-  digitalWrite(BOOT0, HIGH);
-  delay(100);
-  digitalWrite(NRST, LOW);
-  delay(50);
-  digitalWrite(NRST, HIGH);
-  delay(200);
+
+void FlashMode() {
+  return bootMode(HIGH);
 }
 
-void RunMode()  {    //Tested  Change to runmode
-  digitalWrite(BOOT0, LOW);
+void RunMode() {
+  return bootMode(LOW);
+}
+
+void bootMode(int mode)  {    //Tested  Change to runmode
+  digitalWrite(BOOT0, mode);
   delay(100);
   digitalWrite(NRST, LOW);
   delay(50);
