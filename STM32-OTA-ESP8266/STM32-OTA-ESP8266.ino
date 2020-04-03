@@ -95,7 +95,6 @@ String stringtmp;
 int rdtmp;
 int stm32ver;
 bool initflag = 0;
-bool Runflag = 0;
 
 
 void sendJsonResponse(int code, const char *msg) {
@@ -183,14 +182,7 @@ void setup(void)
   server.on("/programm", HTTP_GET, handleFlash);
   
   server.on("/run", HTTP_GET, []() {
-    if (Runflag == 0) {
-      RunMode();
-      Runflag = 1;
-    }
-    else {
-      FlashMode();
-      Runflag = 0;
-    }
+    RunMode();
     sendJsonOK("Run");
   });
   
@@ -234,10 +226,8 @@ void setup(void)
   
   server.on("/sync", HTTP_GET, []() {
     bool success = false;
-    if (Runflag == 1) {
-      FlashMode();
-      Runflag = 0;
-    }
+
+    FlashMode();
 
     Serial.write(STM32INIT);
     delay(10);
