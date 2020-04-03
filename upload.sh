@@ -54,7 +54,7 @@ mcuFlash() {
 
 mcuDeleteBin() {
 	echo -ne "Deleting binary $SEP "
-	curl -s $BASEURL/delete >/dev/null
+	curl -s $BASEURL/delete | grep "Deleted" >/dev/null
 	ret=$?
 	[ $ret -eq 0 ] && echo "Done" || echo "FAIL"
 	return $ret

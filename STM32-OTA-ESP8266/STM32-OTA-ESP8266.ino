@@ -88,7 +88,7 @@ ESP8266WebServer server(80);
 ESP8266HTTPUpdateServer httpUpdater;
 #endif /* WITH_GWOTA */
 
-const char* serverIndex = "<h1>Upload STM32 BinFile</h1><h2><br><br><form method='POST' action='/upload' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Upload'></form></h2>";
+//const char* serverIndex = "<h1>Upload STM32 BinFile</h1><h2><br><br><form method='POST' action='/upload' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Upload'></form></h2>";
 File fsUploadFile;
 uint8_t binread[256];
 int bini = 0;
@@ -116,18 +116,12 @@ void handleFlash()
   String FileName, flashwr;
   int lastbuf = 0;
   uint8_t cflag, fnum = 256;
-  /*
-  Dir dir = SPIFFS.openDir("/");
-  while (dir.next())
-  {
-    FileName = dir.fileName();
-  }
-  fsUploadFile = SPIFFS.open(FileName, "r");
-  */
 
   fsUploadFile = SPIFFS.open(upload_filename, "r");
   
-  if (fsUploadFile) {
+  if (!fsUploadFile) {
+    sendJsonFAIL("Could not open firmware");
+  } else {
     bini = fsUploadFile.size() / 256;
     lastbuf = fsUploadFile.size() % 256;
     flashwr = String(bini) + "-" + String(lastbuf) + "<br>";
@@ -155,94 +149,10 @@ void handleFlash()
       }
     //flashwr += String(binread[0]) + "," + String(binread[lastbuf - 1]) + "<br>";
     fsUploadFile.close();
-    String flashhtml = "<h1>Programming</h1><h2>" + flashwr +  "<br><br><a style=\"color:white\" href=\"/up\">Upload STM32 BinFile</a><br><br><a style=\"color:white\" href=\"/list\">List STM32 BinFile</a></h2>";
-    server.send(200, "text/html", makePage("Flash Page", flashhtml));
+    //String flashhtml = "<h1>Programming</h1><h2>" + flashwr +  "<br><br><a style=\"color:white\" href=\"/up\">Upload STM32 BinFile</a><br><br><a style=\"color:white\" href=\"/list\">List STM32 BinFile</a></h2>";
+    //server.send(200, "text/html", makePage("Flash Page", flashhtml));
+    sendJsonOK("Programming");
   }
-}
-
-
-void handleFileUpload()
-{
-  if (server.uri() != "/upload") return;
-  HTTPUpload& upload = server.upload();
-  if (upload.status == UPLOAD_FILE_START) {
-    /*
-    String filename = upload.filename;
-    if (!filename.startsWith("/")) filename = "/" + filename;
-    fsUploadFile = SPIFFS.open(filename, "w");
-    */
-    fsUploadFile = SPIFFS.open(upload_filename, "w");
-  } else if (upload.status == UPLOAD_FILE_WRITE) {
-    if (fsUploadFile)
-      fsUploadFile.write(upload.buf, upload.currentSize);
-  } else if (upload.status == UPLOAD_FILE_END) {
-    if (fsUploadFile)
-      fsUploadFile.close();
-  }
-}
-
-void handleFileDelete() {
-  //int binhigh = 0;
-  /*
-  String FileList = "File: ";
-  String FName;
-  Dir dir = SPIFFS.openDir("/");
-  while (dir.next()) {
-    FName = dir.fileName();
-  }
-  FileList += FName;
-  if (SPIFFS.exists(FName)) {
-    server.send(200, "text/html", makePage("Deleted", "<h2>" + FileList + " be deleted!<br><br><a style=\"color:white\" href=\"/list\">Return </a></h2>"));
-    SPIFFS.remove(FName);
-  }
-  else
-    return server.send(404, "text/html", makePage("File Not found", "404"));
-    */
-  if (SPIFFS.exists(upload_filename)) {
-    sendJsonOK("Deleted");
-    SPIFFS.remove(upload_filename);
-  } else {
-    sendJsonFAIL("No file to delete");
-  }
-}
-
-
-void handleListFiles()
-{
-  /*
-  String FileList = "Bootloader Ver: ";
-  String Listcode;
-  char blversion = 0;
-  
-  blversion = stm32Version();
-  FileList += String((blversion >> 4) & 0x0F) + "." + String(blversion & 0x0F) + "<br> MCU: ";
-  FileList += STM32_CHIPNAME[stm32GetId()];
-  FileList += "<br><br> File: ";
-  */
-  /*
-  Dir dir = SPIFFS.openDir("/");
-  while (dir.next())
-  {
-    String FileName = dir.fileName();
-    File f = dir.openFile("r");
-    String FileSize = String(f.size());
-    int whsp = 6 - FileSize.length();
-    while (whsp-- > 0)
-    {
-      FileList += " ";
-    }
-    FileList +=  FileName + "   Size:" + FileSize;
-  }*/
-
-  if (SPIFFS.exists(upload_filename)) {
-    sendJsonOK("Ready to /flash, /delete, /up");
-  } else {
-    sendJsonFAIL("No firmware uploaded");
-  }
-  /*
-  Listcode = "<h1>List STM32 BinFile</h1><h2>" + FileList + "<br><br><a style=\"color:white\" href=\"/flash\">Flash Menu</a><br><br><a style=\"color:white\" href=\"/delete\">Delete BinFile </a><br><br><a style=\"color:white\" href=\"/up\">Upload BinFile</a></h2>";
-  server.send(200, "text/html", makePage("FileList", Listcode));
-  */
 }
 
 void setup(void)
@@ -272,15 +182,23 @@ void setup(void)
     Serial.println("WiFi failed, retrying.");
   }
 
-
+/*
   server.on("/up", HTTP_GET, []() {
-
     server.send(200, "text/html", makePage("Select file", serverIndex));
   });
-  server.on("/list", HTTP_GET, handleListFiles);
+*/  
+  server.on("/list", HTTP_GET, []() {
+    if (SPIFFS.exists(upload_filename)) {
+      sendJsonOK("Ready to /erase, /programm, /delete");
+    } else {
+      sendJsonFAIL("No firmware uploaded");
+    }
+  });
+  
   server.on("/programm", HTTP_GET, handleFlash);
+  
   server.on("/run", HTTP_GET, []() {
-    String Runstate = "STM32 Restart and runing!<br><br> you can reflash MCU (click 1.FlashMode before return Home) <br><br> Or close Browser";
+    //String Runstate = "STM32 Restart and runing!<br><br> you can reflash MCU (click 1.FlashMode before return Home) <br><br> Or close Browser";
     // stm32Run();
     if (Runflag == 0) {
       RunMode();
@@ -291,28 +209,56 @@ void setup(void)
       //       initflag = 0;
       Runflag = 0;
     }
-    server.send(200, "text/html", makePage("Run", "<h2>" + Runstate + "<br><br><a style=\"color:white\" href=\"/run\">1.FlashMode </a><br><br><a style=\"color:white\" href=\"/\">2.Home </a></h2>"));
+    //server.send(200, "text/html", makePage("Run", "<h2>" + Runstate + "<br><br><a style=\"color:white\" href=\"/run\">1.FlashMode </a><br><br><a style=\"color:white\" href=\"/\">2.Home </a></h2>"));
+    sendJsonOK("Run");
   });
+  
   server.on("/erase", HTTP_GET, []() {
-    if (stm32Erase() == STM32ACK)
-      stringtmp = "<h1>Erase OK</h1><h2><a style=\"color:white\" href=\"/list\">Return </a></h2>";
-    else if (stm32Erasen() == STM32ACK)
-      stringtmp = "<h1>Erase OK</h1><h2><a style=\"color:white\" href=\"/list\">Return </a></h2>";
-    else
-      stringtmp = "<h1>Erase failure</h1><h2><a style=\"color:white\" href=\"/list\">Return </a></h2>";
-    server.send(200, "text/html", makePage("Erase page", stringtmp));
+    if (stm32Erase() == STM32ACK) {
+      sendJsonOK("Erase OK");
+    } else if (stm32Erasen() == STM32ACK) {
+      sendJsonOK("Erase OK");
+    }
+    sendJsonFAIL("Erase failure");
   });
+  /*
   server.on("/flash", HTTP_GET, []() {
     stringtmp = "<h1>FLASH MENU</h1><h2><a style=\"color:white\" href=\"/programm\">Flash STM32</a><br><br><a style=\"color:white\" href=\"/erase\">Erase STM32</a><br><br><a style=\"color:white\" href=\"/run\">Run STM32</a><br><br><a style=\"color:white\" href=\"/list\">Return </a></h2>";
     server.send(200, "text/html", makePage("Flash page", stringtmp));
   });
-  server.on("/delete", HTTP_GET, handleFileDelete);
-  server.onFileUpload(handleFileUpload);
+  */
+  server.on("/delete", HTTP_GET, []() {
+    if (SPIFFS.exists(upload_filename)) {
+      sendJsonOK("Deleted");
+      SPIFFS.remove(upload_filename);
+    } else {
+      sendJsonFAIL("No file to delete");
+    }
+  });
+  
+  server.onFileUpload([](){
+    if (server.uri() != "/upload") return;
+    HTTPUpload& upload = server.upload();
+    if (upload.status == UPLOAD_FILE_START) {
+      fsUploadFile = SPIFFS.open(upload_filename, "w");
+    } else if (upload.status == UPLOAD_FILE_WRITE) {
+      if (fsUploadFile) {
+        fsUploadFile.write(upload.buf, upload.currentSize);
+      }
+    } else if (upload.status == UPLOAD_FILE_END) {
+      if (fsUploadFile) {
+        fsUploadFile.close();
+      }
+    }
+  });
+  
   server.on("/upload", HTTP_POST, []() {
     //server.send(200, "text/html", makePage("FileList", "<h1> Uploaded OK </h1><br><br><h2><a style=\"color:white\" href=\"/list\">Return </a></h2>"));
     sendJsonOK("Uploaded OK");
   });
+  
   server.on("/sync", HTTP_GET, []() {
+    bool success = false;
     if (Runflag == 1) {
       FlashMode();
       Runflag = 0;
@@ -326,6 +272,7 @@ void setup(void)
     if (rdtmp == STM32ACK)   {
       //initflag = 1;
       stringtmp = STM32_CHIPNAME[stm32GetId()];
+      success = true;
     }
     else if (rdtmp == STM32NACK) {
       Serial.write(STM32INIT);
@@ -335,13 +282,19 @@ void setup(void)
       if (rdtmp == STM32ACK)   {
         //initflag = 1;
         stringtmp = STM32_CHIPNAME[stm32GetId()];
+        success = true;
       }
     }
     else
       stringtmp = "ERROR";
     //}
-    String starthtml = "<h1>STM32-OTA</h1><h2>Version 1.0 by <a style=\"color:white\" href=\"https://github.com/csnol/STM32-OTA\">CSNOL<br><br><a style=\"color:white\" href=\"/up\">Upload STM32 BinFile </a><br><br><a style=\"color:white\" href=\"/list\">List STM32 BinFile</a></h2>";
-    server.send(200, "text/html", makePage("Start Page", starthtml + "- Init MCU -<br> " + stringtmp));
+    //String starthtml = "<h1>STM32-OTA</h1><h2>Version 1.0 by <a style=\"color:white\" href=\"https://github.com/csnol/STM32-OTA\">CSNOL<br><br><a style=\"color:white\" href=\"/up\">Upload STM32 BinFile </a><br><br><a style=\"color:white\" href=\"/list\">List STM32 BinFile</a></h2>";
+    //server.send(200, "text/html", makePage("Start Page", starthtml + "- Init MCU -<br> " + stringtmp));
+    if (success) {
+      sendJsonOK(stringtmp.c_str());
+    } else {
+      sendJsonFAIL("Could not init MCU");
+    }
   });
   
 #ifdef WITH_MDNS
@@ -365,7 +318,7 @@ void loop(void) {
   MDNS.update();
 #endif /* WITH_MDNS */
 }
-
+/*
 String makePage(String title, String contents) {
   String s = "<!DOCTYPE html><html><head>";
   s += "<meta name=\"viewport\" content=\"width=device-width,user-scalable=0\">";
@@ -375,7 +328,7 @@ String makePage(String title, String contents) {
   s += contents;
   s += "</body></html>";
   return s;
-}
+}*/
 
 void FlashMode()  {    //Tested  Change to flashmode
   digitalWrite(BOOT0, HIGH);
