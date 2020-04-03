@@ -24,8 +24,8 @@ typedef enum menu_item_type {
 
 typedef struct menu_item_s menu_item_t;
 
-typedef void (*menu_item_id_cb_t)(menu_item_t *item, int multiplier);
-typedef void (*menu_item_display_cb_t)(menu_item_t *item, char *buffer, int n);
+typedef int (*menu_item_id_cb_t)(menu_item_t *item, int multiplier);
+typedef int (*menu_item_display_cb_t)(menu_item_t *item, char *buffer, int n);
 
 typedef struct menu_item_s {
     char label[MENU_MAX_LABEL];

@@ -32,7 +32,7 @@ int fan_dec_cb(menu_item_t *item, int multiplier);
 int fan_disp_cb(menu_item_t *item, char *buffer, int n);
 
 menu_page_t page1 = {
-        .title = "Fan-Control",
+        .title = "Fan-Control4",
         .items = {
                 {
                         .label = "Mode",
