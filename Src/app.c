@@ -192,7 +192,7 @@ void app_init() {
     pid.Ki = 8;
     pid.Kd = -4;
     pid.dt = 2;
-    OLED_autoSleepEnabled = false;
+    OLED_autoSleepEnabled = true;
     fan_init(&pid.out_min, &pid.out_min);
 
     menu_pages[0]->items[0].data_uint = (uint32_t *) &pid.mode;
