@@ -8,8 +8,6 @@ HOST="192.168.0.66"
 BASEURL="http://${HOST}"
 SL=0.1
 
-FW="${DIR}/cmake-build-debug/fancontrol.bin"
-FW_FILENAME=$(basename $FW)
 SEP="\t\t\t\t"
 
 mcuSyncBootloader() {
@@ -30,7 +28,8 @@ mcuReboot() {
 
 mcuUploadBin() {
 	echo -ne "Uploading binary $SEP "
-	curl -s -F "data=@${FW}" $BASEURL/upload | grep "Uploaded OK" >/dev/null
+	fw=$1
+	curl -s -F "data=@${fw}" $BASEURL/upload | grep "Uploaded OK" >/dev/null
 	ret=$?
 	[ $ret -eq 0 ] && echo "Done" || echo "FAIL"
 	return $ret
@@ -49,6 +48,7 @@ mcuFlash() {
 	curl -s $BASEURL/programm | grep "Programming" >/dev/null
 	ret=$?
 	[ $ret -eq 0 ] && echo "Done" || echo "FAIL"
+
 	return $ret
 }
 
@@ -71,16 +71,58 @@ mcuBinStatus() {
 	rm $TMP	
 }
 
-espOTAupdate() {
+printCSum() {
 	file=$1
-	fn=$(basename $file)
-	curl -s -F "firmware=@${file};filename=\"${fn}\"" ${BASEURL}/update
 }
 
-mcuReboot
-mcuSyncBootloader
-mcuDeleteBin
-mcuUploadBin
-mcuErase
-mcuFlash
-mcuReboot
+espOTAupdate() { 
+	fw=$1
+	[ ! -f $fw ] && echo >&2 "Firmware '$fw' not found" && return 1
+
+	fn=$(basename $fw)
+	lu=${fw}.lastUpdate
+	cs=$(sha1sum -b ${fw} | cut -f1 -d' ')
+	
+	[[ -f "$lu" ]] && [[ "$cs" == "$(cat $lu)" ]] && echo "FW already up to date" && return 0
+
+	echo -ne "Updating ESP $SEP "
+	curl -s -F "firmware=@${fw};fwname=\"${fn}\"" ${BASEURL}/update | grep "Update Success" >/dev/null
+	ret=$?
+	if [ $ret -eq 0 ]; then
+	       	echo "Done"
+		sha1sum -b $fw | cut -f1 -d' ' > $lu
+	else
+		echo "FAIL"
+	fi
+}
+
+stm32OTAupdate() {
+	fw=$1
+
+	[ ! -f $fw ] && echo >&2 "Firmware '$fw' not found" && return 1
+
+	fn=$(basename $fw)
+	lu=${fw}.lastUpdate
+	cs=$(sha1sum -b ${fw} | cut -f1 -d' ')
+	
+	[[ -f "$lu" ]] && [[ "$cs" == "$(cat $lu)" ]] && echo "FW already up to date" && return 0
+
+	mcuReboot
+	mcuSyncBootloader
+	mcuDeleteBin
+	mcuUploadBin $fw
+	mcuErase
+	mcuFlash
+	mcuReboot
+
+	sha1sum -b $fw | cut -f1 -d' ' > $lu
+}
+
+if [ $1 == "--stm32" ]; then
+	stm32OTAupdate $DIR/cmake-build-debug/fancontrol.bin
+fi
+
+if [ $1 == "--esp" ]; then
+	espOTAupdate /tmp/arduino_build_67208/STM32-OTA-ESP8266.ino.bin
+fi
+
