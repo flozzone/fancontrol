@@ -253,7 +253,8 @@ void setup(void)
   pinMode(BOOT0, OUTPUT);
   pinMode(NRST, OUTPUT);
   pinMode(LED, OUTPUT);
-  
+
+  digitalWrite(NRST, HIGH);
 
 #ifdef SPECIAL_INIT
   delay(100);
