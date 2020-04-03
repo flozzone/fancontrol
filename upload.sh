@@ -12,7 +12,7 @@ SEP="\t\t\t\t"
 
 mcuSyncBootloader() {
 	echo -ne "Syncing bootloader $SEP "
-	curl -s $BASEURL | grep "STM32F103" >/dev/null
+	curl -s $BASEURL/sync | grep "STM32F103" >/dev/null
 	ret=$?
 	[ $ret -eq 0 ] && echo "Done" || echo "FAIL"
 	return $ret

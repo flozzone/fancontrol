@@ -312,7 +312,7 @@ void setup(void)
     //server.send(200, "text/html", makePage("FileList", "<h1> Uploaded OK </h1><br><br><h2><a style=\"color:white\" href=\"/list\">Return </a></h2>"));
     sendJsonOK("Uploaded OK");
   });
-  server.on("/", HTTP_GET, []() {
+  server.on("/sync", HTTP_GET, []() {
     if (Runflag == 1) {
       FlashMode();
       Runflag = 0;
