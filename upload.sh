@@ -54,10 +54,9 @@ mcuFlash() {
 
 mcuDeleteBin() {
 	echo -ne "Deleting binary $SEP "
-	curl -s $BASEURL/delete | grep "Deleted" >/dev/null
-	ret=$?
-	[ $ret -eq 0 ] && echo "Done" || echo "FAIL"
-	return $ret
+	curl -s $BASEURL/delete >/dev/null
+	echo "Done" 
+	return 0
 }
 
 mcuBinStatus() {
@@ -107,7 +106,6 @@ stm32OTAupdate() {
 	
 	[[ -f "$lu" ]] && [[ "$cs" == "$(cat $lu)" ]] && echo "FW already up to date" && return 0
 
-	mcuReboot
 	mcuSyncBootloader
 	mcuDeleteBin
 	mcuUploadBin $fw
