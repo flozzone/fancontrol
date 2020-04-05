@@ -10,6 +10,8 @@
 #include <string.h>
 #include <Fan/fan.h>
 
+char testdata[] = "data\n\r";
+
 void PID_Init(PID_t *pid) {
     pid->integral = 0;
     pid->prevError = 0;
@@ -22,6 +24,8 @@ int PID_process(PID_t *pid, float _in, float _setPoint, int *out) {
     int32_t in, setPoint;
     int64_t error, new_integral;
     float derivative;
+
+    HAL_UART_Transmit(&huart1, testdata, strlen(testdata), 1000);
 
     in = (int) (_in * NORMALIZE);
     setPoint = (int) (_setPoint * NORMALIZE);
