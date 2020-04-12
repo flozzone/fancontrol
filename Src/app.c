@@ -21,18 +21,38 @@ static bool is_sleeping;
 static int long_pressed_cnt;
 static osTimerId sleepTimerHandle;
 
+enum mode_choices_e {
+    MODE_AUTO,
+    MODE_MANUAL
+};
 char *mode_choices[8] = {"AUTO", "MANUAL"};
 
 PID_t pid;
 
 void sleeptimerCallback(void const * argument);
 
+void setMode(uint8_t mode);
 int fan_inc_cb(menu_item_t *item, int multiplier);
 int fan_dec_cb(menu_item_t *item, int multiplier);
 int fan_disp_cb(menu_item_t *item, char *buffer, int n);
+int mode_inc_cb(menu_item_t *item, int multiplier);
+int mode_dec_cb(menu_item_t *item, int multiplier);
+
+enum pages_e {
+    PAGE1,
+    PAGE2,
+    PAGE3
+};
+
+enum page1_enum {
+    PAGE1_MODE,
+    PAGE1_TIST,
+    PAGE1_TSOLL,
+    PAGE1_FAN
+};
 
 menu_page_t page1 = {
-        .title = "Fan-Control4",
+        .title = "Fan-Control16",
         .items = {
                 {
                         .label = "Mode",
@@ -40,6 +60,8 @@ menu_page_t page1 = {
                         .editable = true,
                         .min = 0,
                         .max = 1,
+                        .inc_cb = mode_inc_cb,
+                        .dec_cb = mode_dec_cb,
                         .choices = mode_choices
                 },
                 {
@@ -195,23 +217,25 @@ void app_init() {
     OLED_autoSleepEnabled = true;
     fan_init(&pid.out_min, &pid.out_min);
 
-    menu_pages[0]->items[0].data_uint = (uint32_t *) &pid.mode;
-    menu_pages[0]->items[1].data_float = &ds18b20[0].Temperature;
-    menu_pages[0]->items[2].data_float = &pid.setPoint;
-    menu_pages[0]->items[3].data_uint = (uint32_t *) &htim2.Instance->CCR1;
-    menu_pages[1]->items[0].data_int = &pid.Kp;
-    menu_pages[1]->items[1].data_int = &pid.Ki;
-    menu_pages[1]->items[2].data_int = &pid.Kd;
-    menu_pages[1]->items[3].data_int = &pid.out_min;
-    menu_pages[1]->items[4].data_int = &pid.out_max;
-    menu_pages[2]->items[0].data_int = &pid.dt;
-    menu_pages[2]->items[1].data_bool = &OLED_autoSleepEnabled;
-    menu_pages[2]->items[2].data_uint = &OLED_autoSleepAfterSec;
+    menu_pages[PAGE1]->items[PAGE1_MODE].data_uint = (uint32_t *) &pid.mode;
+    menu_pages[PAGE1]->items[PAGE1_TIST].data_float = &ds18b20[0].Temperature;
+    menu_pages[PAGE1]->items[PAGE1_TSOLL].data_float = &pid.setPoint;
+    menu_pages[PAGE1]->items[PAGE1_FAN].data_uint = (uint32_t *) &htim2.Instance->CCR1;
+    menu_pages[PAGE2]->items[0].data_int = &pid.Kp;
+    menu_pages[PAGE2]->items[1].data_int = &pid.Ki;
+    menu_pages[PAGE2]->items[2].data_int = &pid.Kd;
+    menu_pages[PAGE2]->items[3].data_int = &pid.out_min;
+    menu_pages[PAGE2]->items[4].data_int = &pid.out_max;
+    menu_pages[PAGE3]->items[0].data_int = &pid.dt;
+    menu_pages[PAGE3]->items[1].data_bool = &OLED_autoSleepEnabled;
+    menu_pages[PAGE3]->items[2].data_uint = &OLED_autoSleepAfterSec;
     menu_init(&menu, &menu_pages[0], MENU_PAGES);
 
     /* definition and creation of sleepTimer */
     osTimerDef(sleepTimer, sleeptimerCallback);
     sleepTimerHandle = osTimerCreate(osTimer(sleepTimer), osTimerOnce, NULL);
+
+    setMode(MODE_AUTO);
 }
 
 void app_run(void) {
@@ -313,3 +337,32 @@ int fan_dec_cb(menu_item_t *item, int multiplier) {
 int fan_disp_cb(menu_item_t *item, char *buffer, int n) {
     return snprintf(buffer, n, "%i %%", fan_get_percent());
 }
+
+void setMode(uint8_t mode) {
+    menu_item_t *item = menu_pages[PAGE1][PAGE1_MODE].items;
+    *item->data_uint = mode;
+
+    if (mode == MODE_AUTO) {
+        // AUTO
+        menu_pages[PAGE1]->items[PAGE1_FAN].editable = false;
+        menu_pages[PAGE1]->items[PAGE1_TSOLL].editable = true;
+    } else {
+        // MANUAL
+        menu_pages[PAGE1]->items[PAGE1_FAN].editable = true;
+        menu_pages[PAGE1]->items[PAGE1_TSOLL].editable = false;
+    }
+}
+
+void toogle_mode(menu_item_t *item) {
+    setMode((*item->data_uint + 1) % 2);
+}
+
+int mode_inc_cb(menu_item_t *item, int multiplier) {
+    toogle_mode(item);
+}
+
+int mode_dec_cb(menu_item_t *item, int multiplier) {
+    toogle_mode(item);
+}
+
+
