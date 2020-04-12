@@ -15,6 +15,9 @@
 
 #include "tim.h"
 
+#define LONG_PRESS_MULTIPLICATOR 2
+#define LONG_PRESS_MULTIPLICATOR_LIMIT 100
+
 #define MENU_PAGES 3
 
 static bool is_sleeping;
@@ -283,9 +286,9 @@ void app_run(void) {
                 }
             }
 
-            long_pressed_cnt++;
-            if (long_pressed_cnt > 5)
-                long_pressed_cnt = 5;
+            long_pressed_cnt *= LONG_PRESS_MULTIPLICATOR;
+            if (long_pressed_cnt > LONG_PRESS_MULTIPLICATOR_LIMIT)
+                long_pressed_cnt = LONG_PRESS_MULTIPLICATOR_LIMIT;
         }
 
         if (key_pressed) {
