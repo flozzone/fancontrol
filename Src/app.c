@@ -25,7 +25,7 @@ enum mode_choices_e {
     MODE_AUTO,
     MODE_MANUAL
 };
-char *mode_choices[8] = {"AUTO", "MANUAL"};
+char *mode_choices[8] = {"AUTO  ", "MANUAL"};
 
 PID_t pid;
 
