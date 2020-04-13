@@ -57,3 +57,5 @@ cmake-build-debug/
 *.tmp
 .venv/*
 venv/*
+
+!.idea/*

@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
+    <generated>
+      <config projectName="fancontrol" targetName="fancontrol.elf" />
+    </generated>
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="b2ea0a16-5a1b-45a1-af35-376fe4ac2e44" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/openocd.cfg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Drivers/OLED/OLED.c" beforeDir="false" afterPath="$PROJECT_DIR$/Drivers/OLED/OLED.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Drivers/OLED/OLED.h" beforeDir="false" afterPath="$PROJECT_DIR$/Drivers/OLED/OLED.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Drivers/OLED/OLED_task.c" beforeDir="false" afterPath="$PROJECT_DIR$/Drivers/OLED/OLED_task.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Drivers/OLED/OLED_task.h" beforeDir="false" afterPath="$PROJECT_DIR$/Drivers/OLED/OLED_task.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Src/app.c" beforeDir="false" afterPath="$PROJECT_DIR$/Src/app.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Src/stm32f1xx_it.c" beforeDir="false" afterPath="$PROJECT_DIR$/Src/stm32f1xx_it.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/User/PID/pid.c" beforeDir="false" afterPath="$PROJECT_DIR$/User/PID/pid.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/User/PID/pid.h" beforeDir="false" afterPath="$PROJECT_DIR$/User/PID/pid.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/User/menu/menu.c" beforeDir="false" afterPath="$PROJECT_DIR$/User/menu/menu.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/User/menu/menu.h" beforeDir="false" afterPath="$PROJECT_DIR$/User/menu/menu.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gdbinit" beforeDir="false" afterPath="$PROJECT_DIR$/gdbinit-blackmagic" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="SIGN_OFF_COMMIT" value="true" />
+  </component>
+  <component name="OCFindUsagesOptions" text="true" ivars="false" properties="true" derivedClasses="false" />
+  <component name="ProjectId" id="1RQxEZKUgUe0DzQPcMiecwae69L" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../stm32loader" />
+    <property name="settings.editor.selected.configurable" value="CPPToolchains" />
+  </component>
+  <component name="RunManager" selected="OpenOCD Download &amp; Run.OCD fancontrol">
+    <configuration name="BMP" type="CLion_Remote" remoteCommand="/dev/ttyACM0" symbolFile="$PROJECT_DIR$/cmake-build-debug/fancontrol.elf" sysroot="">
+      <method v="2" />
+    </configuration>
+    <configuration name="fancontrol.elf" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="fancontrol" TARGET_NAME="fancontrol.elf" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="fancontrol" RUN_TARGET_NAME="fancontrol.elf">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="CMake Application.fancontrol.elf" />
+      <item itemvalue="GDB Remote Debug.BMP" />
+      <item itemvalue="OpenOCD Download &amp; Run.OCD fancontrol" />
+    </list>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b2ea0a16-5a1b-45a1-af35-376fe4ac2e44" name="Default Changelist" comment="" />
+      <created>1569613010177</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1569613010177</updated>
+      <workItem from="1569613013283" duration="1450000" />
+      <workItem from="1569652862530" duration="1778000" />
+      <workItem from="1578213497099" duration="2881000" />
+      <workItem from="1584863213209" duration="75000" />
+      <workItem from="1584863668884" duration="7254000" />
+      <workItem from="1585066100469" duration="4138000" />
+      <workItem from="1585472403717" duration="3870000" />
+      <workItem from="1585608557379" duration="5000" />
+      <workItem from="1585771327300" duration="1828000" />
+      <workItem from="1585935775891" duration="8517000" />
+      <workItem from="1586026177791" duration="652000" />
+      <workItem from="1586110864306" duration="939000" />
+      <workItem from="1586194352624" duration="673000" />
+      <workItem from="1586195039604" duration="148000" />
+      <workItem from="1586195196972" duration="1219000" />
+      <workItem from="1586279022169" duration="3005000" />
+      <workItem from="1586725932531" duration="5840000" />
+      <workItem from="1586795168897" duration="16197000" />
+    </task>
+    <task id="LOCAL-00001" summary="Disable T-soll when MANUAL and Fan when AUTO">
+      <created>1586730409414</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1586730409414</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Fix orphaned characters when switching text">
+      <created>1586731192778</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1586731192778</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Tune button debouncing">
+      <created>1586732524558</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1586732524558</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Introduce indrement multiplicator">
+      <created>1586732830593</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1586732830593</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Disable T-soll when MANUAL and Fan when AUTO" />
+    <MESSAGE value="Fix orphaned characters when switching text" />
+    <MESSAGE value="Tune button debouncing" />
+    <MESSAGE value="Introduce indrement multiplicator" />
+    <option name="LAST_COMMIT_MESSAGE" value="Introduce indrement multiplicator" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="738" y="391" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1586796632125">
+      <screen x="0" y="25" width="2560" height="1415" />
+    </state>
+    <state x="738" y="391" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.25.2560.1415@0.25.2560.1415" timestamp="1586796632125" />
+    <state x="1038" y="478" key="#xdebugger.evaluate" timestamp="1586813388744">
+      <screen x="0" y="25" width="2560" height="1415" />
+    </state>
+    <state x="1038" y="478" key="#xdebugger.evaluate/0.25.2560.1415@0.25.2560.1415" timestamp="1586813388744" />
+    <state x="891" y="321" width="769" height="819" key="CommitChangelistDialog2" timestamp="1586732830378">
+      <screen x="0" y="25" width="2560" height="1415" />
+    </state>
+    <state x="891" y="321" width="769" height="819" key="CommitChangelistDialog2/0.25.2560.1415@0.25.2560.1415" timestamp="1586732830378" />
+    <state x="1063" y="491" width="426" height="479" key="FileChooserDialogImpl" timestamp="1586796628470">
+      <screen x="0" y="25" width="2560" height="1415" />
+    </state>
+    <state x="1063" y="491" width="426" height="479" key="FileChooserDialogImpl/0.25.2560.1415@0.25.2560.1415" timestamp="1586796628470" />
+    <state width="2514" height="490" key="GridCell.Tab.0.bottom" timestamp="1586813881830">
+      <screen x="0" y="25" width="2560" height="1415" />
+    </state>
+    <state width="2514" height="490" key="GridCell.Tab.0.bottom/0.25.2560.1415@0.25.2560.1415" timestamp="1586813881830" />
+    <state width="2514" height="490" key="GridCell.Tab.0.center" timestamp="1586813881829">
+      <screen x="0" y="25" width="2560" height="1415" />
+    </state>
+    <state width="2514" height="490" key="GridCell.Tab.0.center/0.25.2560.1415@0.25.2560.1415" timestamp="1586813881829" />
+    <state width="2514" height="490" key="GridCell.Tab.0.left" timestamp="1586813881828">
+      <screen x="0" y="25" width="2560" height="1415" />
+    </state>
+    <state width="2514" height="490" key="GridCell.Tab.0.left/0.25.2560.1415@0.25.2560.1415" timestamp="1586813881828" />
+    <state width="2514" height="490" key="GridCell.Tab.0.right" timestamp="1586813881829">
+      <screen x="0" y="25" width="2560" height="1415" />
+    </state>
+    <state width="2514" height="490" key="GridCell.Tab.0.right/0.25.2560.1415@0.25.2560.1415" timestamp="1586813881829" />
+    <state width="2514" height="490" key="GridCell.Tab.1.bottom" timestamp="1586813881831">
+      <screen x="0" y="25" width="2560" height="1415" />
+    </state>
+    <state width="2514" height="490" key="GridCell.Tab.1.bottom/0.25.2560.1415@0.25.2560.1415" timestamp="1586813881831" />
+    <state width="2514" height="490" key="GridCell.Tab.1.center" timestamp="1586813881830">
+      <screen x="0" y="25" width="2560" height="1415" />
+    </state>
+    <state width="2514" height="490" key="GridCell.Tab.1.center/0.25.2560.1415@0.25.2560.1415" timestamp="1586813881830" />
+    <state width="2514" height="490" key="GridCell.Tab.1.left" timestamp="1586813881830">
+      <screen x="0" y="25" width="2560" height="1415" />
+    </state>
+    <state width="2514" height="490" key="GridCell.Tab.1.left/0.25.2560.1415@0.25.2560.1415" timestamp="1586813881830" />
+    <state width="2514" height="490" key="GridCell.Tab.1.right" timestamp="1586813881830">
+      <screen x="0" y="25" width="2560" height="1415" />
+    </state>
+    <state width="2514" height="490" key="GridCell.Tab.1.right/0.25.2560.1415@0.25.2560.1415" timestamp="1586813881830" />
+    <state width="2514" height="490" key="GridCell.Tab.2.bottom" timestamp="1586813881832">
+      <screen x="0" y="25" width="2560" height="1415" />
+    </state>
+    <state width="2514" height="490" key="GridCell.Tab.2.bottom/0.25.2560.1415@0.25.2560.1415" timestamp="1586813881832" />
+    <state width="2514" height="490" key="GridCell.Tab.2.center" timestamp="1586813881831">
+      <screen x="0" y="25" width="2560" height="1415" />
+    </state>
+    <state width="2514" height="490" key="GridCell.Tab.2.center/0.25.2560.1415@0.25.2560.1415" timestamp="1586813881831" />
+    <state width="2514" height="490" key="GridCell.Tab.2.left" timestamp="1586813881831">
+      <screen x="0" y="25" width="2560" height="1415" />
+    </state>
+    <state width="2514" height="490" key="GridCell.Tab.2.left/0.25.2560.1415@0.25.2560.1415" timestamp="1586813881831" />
+    <state width="2514" height="490" key="GridCell.Tab.2.right" timestamp="1586813881832">
+      <screen x="0" y="25" width="2560" height="1415" />
+    </state>
+    <state width="2514" height="490" key="GridCell.Tab.2.right/0.25.2560.1415@0.25.2560.1415" timestamp="1586813881832" />
+    <state x="784" y="368" key="SettingsEditor" timestamp="1586796671409">
+      <screen x="0" y="25" width="2560" height="1415" />
+    </state>
+    <state x="784" y="368" key="SettingsEditor/0.25.2560.1415@0.25.2560.1415" timestamp="1586796671409" />
+    <state x="934" y="351" width="685" height="759" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1586809942394">
+      <screen x="0" y="25" width="2560" height="1415" />
+    </state>
+    <state x="934" y="351" width="685" height="759" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.25.2560.1415@0.25.2560.1415" timestamp="1586809942394" />
+    <state x="839" y="462" width="873" height="536" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1586808905300">
+      <screen x="0" y="25" width="2560" height="1415" />
+    </state>
+    <state x="839" y="462" width="873" height="536" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.25.2560.1415@0.25.2560.1415" timestamp="1586808905300" />
+    <state x="966" y="480" width="1015" height="928" key="find.popup" timestamp="1586811123350">
+      <screen x="0" y="25" width="2560" height="1415" />
+    </state>
+    <state x="966" y="480" width="1015" height="928" key="find.popup/0.25.2560.1415@0.25.2560.1415" timestamp="1586811123350" />
+    <state x="943" y="348" width="672" height="678" key="search.everywhere.popup" timestamp="1586813879985">
+      <screen x="0" y="25" width="2560" height="1415" />
+    </state>
+    <state x="943" y="348" width="672" height="678" key="search.everywhere.popup/0.25.2560.1415@0.25.2560.1415" timestamp="1586813879985" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Src/stm32f1xx_it.c</url>
+          <line>209</line>
+          <option name="timeStamp" value="14" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Src/stm32f1xx_it.c</url>
+          <line>208</line>
+          <option name="timeStamp" value="15" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Drivers/OLED/OLED_task.c</url>
+          <line>93</line>
+          <option name="timeStamp" value="21" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Drivers/OLED/OLED_task.c</url>
+          <line>68</line>
+          <option name="timeStamp" value="24" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Drivers/OLED/OLED_task.c</url>
+          <line>80</line>
+          <option name="timeStamp" value="25" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Drivers/OLED/OLED_task.c</url>
+          <line>84</line>
+          <option name="timeStamp" value="26" />
+        </line-breakpoint>
+      </breakpoints>
+      <default-breakpoints>
+        <breakpoint enabled="true" log-message="true" log-stack="true" type="CidrExceptionBreakpoint" />
+        <breakpoint enabled="true" type="javascript-exception" />
+      </default-breakpoints>
+    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="com.jetbrains.cidr.embedded.openocd.conf.type">
+        <watch expression="pid-&gt;out" />
+        <watch expression="pc" language="ObjectiveC" />
+      </configuration>
+    </watches-manager>
+  </component>
+</project>
