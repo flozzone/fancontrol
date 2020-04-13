@@ -13,14 +13,13 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define OLED_PRINTF_BUF_SIZE 32
 
-extern char oledBuf[OLED_PRINTF_BUF_SIZE];
 extern bool OLED_autoSleepEnabled;
 extern uint32_t OLED_autoSleepAfterSec;
 
 #ifdef USE_U8X8
 #define OLEDString(x, y, s) u8x8_DrawString(&u8x8, x, y, s)
+#define OLEDChar(x, y, c) u8x8_DrawGlyph(&u8x8, x, y, c)
 #define OLEDClear() u8x8_ClearDisplay(&u8x8)
 #define OLEDPowerSave(e) u8x8_SetPowerSave(&u8x8, e)
 #else
@@ -29,7 +28,7 @@ extern uint32_t OLED_autoSleepAfterSec;
 #define OLEDPowerSave(e) u8g2_SetPowerSave(&u8g2, e)
 #endif
 
-#define OLEDPrintf(x, y, f, ...) snprintf(oledBuf, OLED_PRINTF_BUF_SIZE, f, __VA_ARGS__); OLEDString(x, y, oledBuf);
+
 
 void OLEDInit(void);
 

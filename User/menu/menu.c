@@ -34,12 +34,20 @@ void menu_page_prev(menu_t *menu) {
 void menu_item_next(menu_t *menu) {
     if (menu->pages[menu->cur_page]->items[menu->cur_item+1].type != MENU_TYPE_NONE) {
         menu->cur_item++;
+
+        if (menu->cur_item >= MENU_MAX_ITEMS) {
+            menu->start_item++;
+        }
     }
 }
 
 void menu_item_prev(menu_t *menu) {
     if (menu->cur_item > 0) {
         menu->cur_item--;
+
+        if (menu->cur_item < menu->start_item) {
+            menu->start_item--;
+        }
     }
 }
 

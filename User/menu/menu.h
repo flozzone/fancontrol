@@ -8,9 +8,14 @@
 #include <stdbool.h>
 #include <stdint-gcc.h>
 
-#define MENU_MAX_LABEL 16
+#define MENU_MAX_LABEL 8
 #define MENU_MAX_TITLE 16
+#define MENU_MAX_ITEMS 6
 #define MENU_X_ITEM_OFFSET 0
+#define MENU_LINE_XMARKER MENU_X_ITEM_OFFSET
+#define MENU_LINE_XLABEL (MENU_LINE_XMARKER + 1)
+#define MENU_LINE_XVAL_START (MENU_LINE_XLABEL + MENU_MAX_LABEL)
+#define MENU_LINE_XVAL_END = 15
 
 typedef enum menu_item_type {
     MENU_TYPE_NONE = 0,
@@ -19,7 +24,7 @@ typedef enum menu_item_type {
     MENU_TYPE_DOUBLE,
     MENU_TYPE_FLOAT,
     MENU_TYPE_ENUM,
-    MENU_TYPE_BOOL
+    MENU_TYPE_BOOL,
 } menu_item_type_e;
 
 typedef struct menu_item_s menu_item_t;
@@ -37,8 +42,8 @@ typedef struct menu_item_s {
     menu_item_id_cb_t dec_cb;
     menu_item_display_cb_t display_cb;
     union {
-        int32_t *data_int;
-        uint32_t *data_uint;
+        uint16_t *data_int;
+        uint16_t *data_uint;
         double *data_double;
         float *data_float;
         bool *data_bool;
@@ -58,6 +63,7 @@ typedef struct menu_s {
     int cur_item;
     bool page_changed;
     bool is_editing;
+    uint8_t start_item;
 } menu_t;
 
 extern menu_t menu;

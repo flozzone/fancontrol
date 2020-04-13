@@ -6,7 +6,6 @@
 #include "cmsis_os.h"
 
 osThreadId 	OLEDTaskHandle;
-char oledBuf[OLED_PRINTF_BUF_SIZE];
 bool OLED_autoSleepEnabled = true;
 uint32_t OLED_autoSleepAfterSec = 15;
 
