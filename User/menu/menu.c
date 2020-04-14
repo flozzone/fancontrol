@@ -3,16 +3,30 @@
 //
 
 #include "menu.h"
+#include <string.h>
 
 menu_t menu;
 
-void menu_init(menu_t *menu, menu_page_t *pages[], int num_pages) {
+void menu_init(menu_t *menu, menu_page_t *pages[], unsigned int num_pages) {
     menu->num_pages = num_pages;
     menu->cur_item = 0;
     menu->cur_page = 0;
     menu->page_changed = false;
     menu->is_editing = false;
     menu->pages = pages;
+    menu->start_item = 0;
+    uint8_t len;
+
+    for (unsigned int i = 0; i < num_pages; i++) {
+        menu_item_t *item = pages[i]->items;
+        pages[i]->max_label_length = 0;
+        while (item->type != MENU_TYPE_NONE) {
+             len = strlen(item->label);
+            if (len > pages[i]->max_label_length)
+                pages[i]->max_label_length = len;
+            item++;
+        }
+    }
 }
 
 void menu_page_next(menu_t *menu) {
@@ -20,6 +34,7 @@ void menu_page_next(menu_t *menu) {
         menu->cur_page++;
         menu->page_changed = true;
         menu->cur_item = 0;
+        menu->start_item = 0;
     }
 }
 
@@ -28,6 +43,7 @@ void menu_page_prev(menu_t *menu) {
         menu->cur_page--;
         menu->page_changed = true;
         menu->cur_item = 0;
+        menu->start_item = 0;
     }
 }
 
@@ -74,10 +90,28 @@ void menu_item_inc(menu_t *menu, int multiplier) {
                     }
                 }
                 break;
+            case MENU_TYPE_ULONG:
+                if (*item->data_ulong < item->max) {
+                    if (!item->inc_cb) {
+                        (*item->data_ulong) += multiplier;
+                    } else {
+                        item->inc_cb(item, multiplier);
+                    }
+                }
+                break;
             case MENU_TYPE_INT:
                 if (*item->data_int < item->max) {
                     if (!item->dec_cb) {
                         (*item->data_int) += multiplier;
+                    } else {
+                        item->inc_cb(item, multiplier);
+                    }
+                }
+                break;
+            case MENU_TYPE_LONG:
+                if (*item->data_long < item->max) {
+                    if (!item->dec_cb) {
+                        (*item->data_long) += multiplier;
                     } else {
                         item->inc_cb(item, multiplier);
                     }
@@ -121,10 +155,29 @@ void menu_item_dec(menu_t *menu, int multiplier) {
 
                 }
                 break;
+            case MENU_TYPE_ULONG:
+                if (*item->data_ulong > item->min) {
+                    if (!item->dec_cb) {
+                        (*item->data_ulong) -= multiplier;
+                    } else {
+                        item->dec_cb(item, multiplier);
+                    }
+
+                }
+                break;
             case MENU_TYPE_INT:
                 if (*item->data_int > item->min) {
                     if (!item->dec_cb) {
                         (*item->data_int) -= multiplier;
+                    } else {
+                        item->dec_cb(item, multiplier);
+                    }
+                }
+                break;
+            case MENU_TYPE_LONG:
+                if (*item->data_long > item->min) {
+                    if (!item->dec_cb) {
+                        (*item->data_long) -= multiplier;
                     } else {
                         item->dec_cb(item, multiplier);
                     }

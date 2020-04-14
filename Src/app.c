@@ -18,8 +18,15 @@
 #define LONG_PRESS_MULTIPLICATOR 2
 #define LONG_PRESS_MULTIPLICATOR_LIMIT 100
 
-#define MENU_PAGES 3
+#define NELEMS(x)  (sizeof(x) / sizeof((x)[0]))
 
+#define MENU_PAGES ((unsigned int) NELEMS(menu_pages))
+
+enum error_e {
+    NO_ERROR = 0,
+    ERR_OLED_SLEEP_TIMER_RESET_FAILED
+};
+long error_nr;
 static bool is_sleeping;
 static int long_pressed_cnt;
 static osTimerId sleepTimerHandle;
@@ -34,7 +41,7 @@ PID_t pid;
 
 void sleeptimerCallback(void const * argument);
 
-void setMode(uint8_t mode);
+void set_control_mode(uint8_t mode);
 int fan_inc_cb(menu_item_t *item, int multiplier);
 int fan_dec_cb(menu_item_t *item, int multiplier);
 int fan_disp_cb(menu_item_t *item, char *buffer, int n);
@@ -44,18 +51,20 @@ int mode_dec_cb(menu_item_t *item, int multiplier);
 enum pages_e {
     PAGE1,
     PAGE2,
-    PAGE3
+    PAGE3,
+    PAGE_PID_STATS
 };
 
 enum page1_enum {
     PAGE1_MODE,
     PAGE1_TIST,
     PAGE1_TSOLL,
-    PAGE1_FAN
+    PAGE1_FAN,
+    PAGE1_ERROR
 };
 
 menu_page_t page1 = {
-        .title = "Fan-Control16",
+        .title = "Fan-Control20",
         .items = {
                 {
                         .label = "Mode",
@@ -83,13 +92,20 @@ menu_page_t page1 = {
                 },
                 {
                         .label = "Fan",
-                        .type = MENU_TYPE_UINT,
+                        .type = MENU_TYPE_ULONG,
                         .editable = true,
                         .min = 0,
                         .max = 10000,
                         .inc_cb = fan_inc_cb,
                         .dec_cb = fan_dec_cb,
-                        .display_cb = fan_disp_cb
+                        //.display_cb = fan_disp_cb
+                },
+                {
+                        .label = "Error",
+                        .type = MENU_TYPE_LONG,
+                        .editable = false,
+                        .min = INT16_MIN,
+                        .max = INT16_MAX
                 },
                 {
                         .type = MENU_TYPE_NONE
@@ -101,35 +117,35 @@ menu_page_t page2 = {
         .items = {
                 {
                         .label = "P",
-                        .type = MENU_TYPE_INT,
+                        .type = MENU_TYPE_LONG,
                         .editable = true,
                         .min = INT32_MIN,
                         .max = INT32_MAX
                 },
                 {
                         .label = "I",
-                        .type = MENU_TYPE_INT,
+                        .type = MENU_TYPE_LONG,
                         .editable = true,
                         .min = INT32_MIN,
                         .max = INT32_MAX
                 },
                 {
                         .label = "D",
-                        .type = MENU_TYPE_INT,
+                        .type = MENU_TYPE_LONG,
                         .editable = true,
                         .min = INT32_MIN,
                         .max = INT32_MAX
                 },
                 {
                         .label = "MIN",
-                        .type = MENU_TYPE_INT,
+                        .type = MENU_TYPE_LONG,
                         .editable = true,
                         .min = 0,
                         .max = INT32_MAX
                 },
                 {
                         .label = "MAX",
-                        .type = MENU_TYPE_INT,
+                        .type = MENU_TYPE_LONG,
                         .editable = true,
                         .min = 0,
                         .max = INT32_MAX
@@ -145,7 +161,7 @@ menu_page_t page3 = {
         .items = {
                 {
                         .label = "cycle time",
-                        .type = MENU_TYPE_INT,
+                        .type = MENU_TYPE_LONG,
                         .editable = true,
                         .min = 1,
                         .max = INT32_MAX
@@ -159,7 +175,7 @@ menu_page_t page3 = {
                 },
                 {
                         .label = "sleep after",
-                        .type = MENU_TYPE_UINT,
+                        .type = MENU_TYPE_ULONG,
                         .editable = true,
                         .min = 1,
                         .max = UINT32_MAX
@@ -170,13 +186,48 @@ menu_page_t page3 = {
         }
 };
 
-menu_page_t *menu_pages[MENU_PAGES] = {
+enum page_pid_stat_e {
+    PAGE_PID_PREVERROR = 0,
+    PAGE_PID_INTEGRAL,
+    PAGE_PID_OUT,
+    PAGE_PID_OUT_NORMALIZED,
+    PAGE_PID_NEW_INT,
+    PAGE_PID_DERIVATIVE,
+    PAGE_PID_OUT_MIN,
+    PAGE_PID_OUT_MAX,
+};
+menu_page_t page_pid_stat = {
+        .title = "PID stats",
+        .items = {
+            { .label = "  e", .type = MENU_TYPE_LONG,    .editable = false, },
+            { .label = "  i", .type = MENU_TYPE_LONG,    .editable = false, },
+            { .label = "  o", .type = MENU_TYPE_LONG,    .editable = false, },
+            { .label = "o_n", .type = MENU_TYPE_LONG,    .editable = false, },
+            { .label = "i_n", .type = MENU_TYPE_LONG,    .editable = false, },
+            { .label = "  d", .type = MENU_TYPE_FLOAT,   .editable = false, },
+            { .label = "min", .type = MENU_TYPE_LONG,    .editable = false, },
+            { .label = "max", .type = MENU_TYPE_LONG,    .editable = false, },
+            { .type = MENU_TYPE_NONE }
+        }
+};
+
+menu_page_t *menu_pages[] = {
         &page1,
         &page2,
-        &page3
+        &page3,
+        &page_pid_stat
 };
 
 void app_init() {
+
+    /*
+     * Enable additional exceptions, so they don't escalate to
+     * HardFault immediately.
+     */
+    SCB->SHCSR |= SCB_SHCSR_USGFAULTENA_Msk |
+                  SCB_SHCSR_BUSFAULTENA_Msk |
+                  SCB_SHCSR_MEMFAULTENA_Msk;
+
     GPIO_InitTypeDef	init;
     init.Mode = GPIO_MODE_OUTPUT_PP;
     init.Pull = GPIO_NOPULL;
@@ -210,35 +261,54 @@ void app_init() {
     Ds18b20_Init(osPriorityNormal);
     DHT22_Init();
     PID_Init(&pid);
-    pid.setPoint = 24;
+    pid.setPoint = 15;
     pid.out_min = 2050;
     pid.out_max = 10000;
     pid.Kp = 50;
     pid.Ki = 8;
     pid.Kd = -4;
     pid.dt = 2;
-    OLED_autoSleepEnabled = true;
+    pid.inverted = false;
+    OLED_autoSleepEnabled = false;
     fan_init(&pid.out_min, &pid.out_min);
 
-    menu_pages[PAGE1]->items[PAGE1_MODE].data_uint = (uint32_t *) &pid.mode;
+    // page 1 - Fan control
+    menu_pages[PAGE1]->items[PAGE1_MODE].data_uint = &pid.mode;
     menu_pages[PAGE1]->items[PAGE1_TIST].data_float = &ds18b20[0].Temperature;
     menu_pages[PAGE1]->items[PAGE1_TSOLL].data_float = &pid.setPoint;
-    menu_pages[PAGE1]->items[PAGE1_FAN].data_uint = (uint32_t *) &htim2.Instance->CCR1;
-    menu_pages[PAGE2]->items[0].data_int = &pid.Kp;
-    menu_pages[PAGE2]->items[1].data_int = &pid.Ki;
-    menu_pages[PAGE2]->items[2].data_int = &pid.Kd;
-    menu_pages[PAGE2]->items[3].data_int = &pid.out_min;
-    menu_pages[PAGE2]->items[4].data_int = &pid.out_max;
-    menu_pages[PAGE3]->items[0].data_int = &pid.dt;
+    menu_pages[PAGE1]->items[PAGE1_FAN].data_ulong = (uint32_t *) &htim2.Instance->CCR1;
+    menu_pages[PAGE1]->items[PAGE1_ERROR].data_long = &error_nr;
+
+    // page 2 - PID settings
+    menu_pages[PAGE2]->items[0].data_long = &pid.Kp;
+    menu_pages[PAGE2]->items[1].data_long = &pid.Ki;
+    menu_pages[PAGE2]->items[2].data_long = &pid.Kd;
+    menu_pages[PAGE2]->items[3].data_long = &pid.out_min;
+    menu_pages[PAGE2]->items[4].data_long = &pid.out_max;
+
+    // page 3 - Settings
+    menu_pages[PAGE3]->items[0].data_long = &pid.dt;
     menu_pages[PAGE3]->items[1].data_bool = &OLED_autoSleepEnabled;
-    menu_pages[PAGE3]->items[2].data_uint = &OLED_autoSleepAfterSec;
-    menu_init(&menu, &menu_pages[0], MENU_PAGES);
+    menu_pages[PAGE3]->items[2].data_ulong = &OLED_autoSleepAfterSec;
+
+    // page 4 - PID stats
+    menu_pages[PAGE_PID_STATS]->items[PAGE_PID_INTEGRAL].data_long = &pid.integral;
+    menu_pages[PAGE_PID_STATS]->items[PAGE_PID_PREVERROR].data_long = &pid.prevError;
+    menu_pages[PAGE_PID_STATS]->items[PAGE_PID_OUT].data_long = &pid.out;
+    menu_pages[PAGE_PID_STATS]->items[PAGE_PID_OUT_NORMALIZED].data_long = &pid.out_norm;
+    menu_pages[PAGE_PID_STATS]->items[PAGE_PID_NEW_INT].data_long = &pid.new_integral;
+    menu_pages[PAGE_PID_STATS]->items[PAGE_PID_DERIVATIVE].data_float = &pid.derivative;
+    menu_pages[PAGE_PID_STATS]->items[PAGE_PID_OUT_MAX].data_long = &pid.out_max;
+    menu_pages[PAGE_PID_STATS]->items[PAGE_PID_OUT_MIN].data_long = &pid.out_min;
+
+
+    menu_init(&menu, menu_pages, MENU_PAGES);
 
     /* definition and creation of sleepTimer */
     osTimerDef(sleepTimer, sleeptimerCallback);
     sleepTimerHandle = osTimerCreate(osTimer(sleepTimer), osTimerOnce, NULL);
 
-    setMode(MODE_AUTO);
+    set_control_mode(MODE_AUTO);
 }
 
 void app_run(void) {
@@ -301,6 +371,8 @@ void app_run(void) {
             if (xTimerReset(sleepTimerHandle, 10) != pdPASS) {
                 /* The reset command was not executed successfully.  Take appropriate
                 action here. */
+                //TODO: process error correctly
+                error_nr = ERR_OLED_SLEEP_TIMER_RESET_FAILED;
             }
             is_sleeping = false;
         } else {
@@ -341,7 +413,7 @@ int fan_disp_cb(menu_item_t *item, char *buffer, int n) {
     return snprintf(buffer, n, "%i %%", fan_get_percent());
 }
 
-void setMode(uint8_t mode) {
+void set_control_mode(uint8_t mode) {
     menu_item_t *item = menu_pages[PAGE1][PAGE1_MODE].items;
     *item->data_uint = mode;
 
@@ -356,16 +428,16 @@ void setMode(uint8_t mode) {
     }
 }
 
-void toogle_mode(menu_item_t *item) {
-    setMode((*item->data_uint + 1) % 2);
+void toogle_control_mode(menu_item_t *item) {
+    set_control_mode((*item->data_uint + 1) % 2);
 }
 
 int mode_inc_cb(menu_item_t *item, int multiplier) {
-    toogle_mode(item);
+    toogle_control_mode(item);
 }
 
 int mode_dec_cb(menu_item_t *item, int multiplier) {
-    toogle_mode(item);
+    toogle_control_mode(item);
 }
 
 

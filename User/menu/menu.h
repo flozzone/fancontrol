@@ -8,14 +8,10 @@
 #include <stdbool.h>
 #include <stdint-gcc.h>
 
-#define MENU_MAX_LABEL 8
+#define MENU_MAX_LABEL 14
 #define MENU_MAX_TITLE 16
 #define MENU_MAX_ITEMS 6
 #define MENU_X_ITEM_OFFSET 0
-#define MENU_LINE_XMARKER MENU_X_ITEM_OFFSET
-#define MENU_LINE_XLABEL (MENU_LINE_XMARKER + 1)
-#define MENU_LINE_XVAL_START (MENU_LINE_XLABEL + MENU_MAX_LABEL)
-#define MENU_LINE_XVAL_END = 15
 
 typedef enum menu_item_type {
     MENU_TYPE_NONE = 0,
@@ -25,6 +21,8 @@ typedef enum menu_item_type {
     MENU_TYPE_FLOAT,
     MENU_TYPE_ENUM,
     MENU_TYPE_BOOL,
+    MENU_TYPE_LONG,
+    MENU_TYPE_ULONG
 } menu_item_type_e;
 
 typedef struct menu_item_s menu_item_t;
@@ -33,17 +31,19 @@ typedef int (*menu_item_id_cb_t)(menu_item_t *item, int multiplier);
 typedef int (*menu_item_display_cb_t)(menu_item_t *item, char *buffer, int n);
 
 typedef struct menu_item_s {
-    char label[MENU_MAX_LABEL];
-    menu_item_type_e type;
+    const char label[MENU_MAX_LABEL];
+    const menu_item_type_e type;
     bool editable;
     int min;
     int max;
-    menu_item_id_cb_t inc_cb;
-    menu_item_id_cb_t dec_cb;
-    menu_item_display_cb_t display_cb;
+    const menu_item_id_cb_t inc_cb;
+    const menu_item_id_cb_t dec_cb;
+    const menu_item_display_cb_t display_cb;
     union {
-        uint16_t *data_int;
+        int16_t *data_int;
         uint16_t *data_uint;
+        int32_t *data_long;
+        uint32_t *data_ulong;
         double *data_double;
         float *data_float;
         bool *data_bool;
@@ -53,6 +53,7 @@ typedef struct menu_item_s {
 
 typedef struct menu_page_s {
     char title[MENU_MAX_TITLE];
+    uint8_t max_label_length;
     menu_item_t items[];
 } menu_page_t;
 
@@ -68,7 +69,7 @@ typedef struct menu_s {
 
 extern menu_t menu;
 
-void menu_init(menu_t *menu, menu_page_t *pages[], int num_pages);
+void menu_init(menu_t *menu, menu_page_t *pages[], unsigned int num_pages);
 void menu_page_next(menu_t *menu);
 void menu_page_prev(menu_t *menu);
 void menu_item_next(menu_t *menu);

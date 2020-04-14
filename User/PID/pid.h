@@ -7,11 +7,12 @@
 
 #include "cmsis_os.h"
 
+#define NORMALIZE_I 100
 #define NORMALIZE 100.0F
 
 typedef enum pid_mode_e {
-    AUTOMATIC,
-    MANUAL
+    PID_MODE_AUTO = 0,
+    PID_MODE_MANUAL = 1
 } pid_mode_t;
 
 typedef struct {
@@ -22,13 +23,20 @@ typedef struct {
     int32_t Kd;
     int32_t dt;
 
-    int integral;
-    int prevError;
+    int32_t integral;
+    int32_t prevError;
 
     int32_t out_min;
     int32_t out_max;
+    uint8_t inverted;
 
-    pid_mode_t mode;
+    uint16_t mode;
+
+    // debugging
+    int32_t new_integral;
+    float derivative;
+    int32_t out;
+    int32_t out_norm;
 
     osThreadId 	taskHandle;
 } PID_t;
