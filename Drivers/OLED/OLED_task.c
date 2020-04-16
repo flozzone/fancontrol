@@ -10,15 +10,16 @@
 
 #include "ds18b20/ds18b20.h"
 #include "menu/menu.h"
+#include "ltoa.h"
 
-#define OLED_BUF_SIZE 16
+#define OLED_MAX_CHARS_ON_LINE 16
+#define OLED_BUF_SIZE OLED_MAX_CHARS_ON_LINE
 
 static char buf[OLED_BUF_SIZE];
 
 
-void draw_value (uint8_t i, menu_item_t *item, uint8_t val_start_x, uint8_t y_coord) {
+char *draw_value (menu_item_t *item, char *buf) {
     char *val_ptr = buf;
-
     if (item->display_cb) {
         item->display_cb(item, buf, OLED_BUF_SIZE);
     } else {
@@ -27,13 +28,13 @@ void draw_value (uint8_t i, menu_item_t *item, uint8_t val_start_x, uint8_t y_co
                 itoa(*item->data_int, buf, 10);
                 break;
             case MENU_TYPE_UINT:
-                itoa(*item->data_uint, buf, 10);
+                utoa(*item->data_uint, buf, 10);
                 break;
             case MENU_TYPE_LONG:
-                itoa(*item->data_long, buf, 10);
+                _ltoa(*item->data_long, buf, 10);
                 break;
             case MENU_TYPE_ULONG:
-                itoa(*item->data_ulong, buf, 10);
+                _ultoa(*item->data_ulong, buf, 10);
                 break;
             case MENU_TYPE_FLOAT: {
                 int val = (*item->data_float) * 10;
@@ -41,7 +42,8 @@ void draw_value (uint8_t i, menu_item_t *item, uint8_t val_start_x, uint8_t y_co
                 uint8_t len = strlen(buf);
                 buf[len] = '.';
                 buf[len + 1] = 0x30 + (val % 10);
-                buf[len + 2] = '\0';
+                memset(&buf[len + 2], ' ', OLED_BUF_SIZE - 3 - len);
+                buf[OLED_BUF_SIZE - 1] = '\0';
                 break;
             }
             case MENU_TYPE_ENUM: {
@@ -58,7 +60,7 @@ void draw_value (uint8_t i, menu_item_t *item, uint8_t val_start_x, uint8_t y_co
         }
     }
 
-    OLEDString(val_start_x, y_coord, val_ptr);
+    return val_ptr;
 }
 
 void TaskOLED(void const * argument) {
@@ -90,9 +92,18 @@ void TaskOLED(void const * argument) {
             }
 
             OLEDChar(MENU_X_ITEM_OFFSET, y_coord, curr);
+
             OLEDString(MENU_X_ITEM_OFFSET + 1, y_coord, item->label);
 
-            draw_value(i, item, 2 + menu.pages[menu.cur_page]->max_label_length, y_coord);
+            char *val_ptr = draw_value(item, buf);
+            uint8_t val_x_offset = 2 + menu.pages[menu.cur_page]->max_label_length;
+            uint8_t allowed_val_len = OLED_MAX_CHARS_ON_LINE - val_x_offset;
+            size_t val_len = strlen(val_ptr);
+            if (val_len > allowed_val_len) {
+                val_ptr[allowed_val_len - 1] = '\0';
+            }
+
+            OLEDString(val_x_offset, y_coord, val_ptr);
 
             i++;
             item_nr++;
