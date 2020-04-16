@@ -311,6 +311,65 @@ void app_init() {
     set_control_mode(MODE_AUTO);
 }
 
+bool read_keypad(void) {
+    bool key_pressed = ((GPIOC->IDR & (BUTTON_BACK_Pin | BUTTON_OK_Pin)) || (GPIOB->IDR & (BUTTON_UP_Pin | BUTTON_DOWN_Pin | BUTTON_LEFT_Pin | BUTTON_RIGHT_Pin))) ? true : false;
+    if ( key_pressed && !is_sleeping ) {
+        if (HAL_GPIO_ReadPin(BUTTON_OK_GPIO_Port, BUTTON_OK_Pin) == GPIO_PIN_SET) {
+            if (menu_current_item(&menu)->editable) {
+                menu.is_editing = true;
+            }
+        }
+        if (HAL_GPIO_ReadPin(BUTTON_BACK_GPIO_Port, BUTTON_BACK_Pin) == GPIO_PIN_SET) {
+            menu.is_editing = false;
+        }
+        if (HAL_GPIO_ReadPin(BUTTON_UP_GPIO_Port, BUTTON_UP_Pin) == GPIO_PIN_SET) {
+            if (!menu.is_editing) {
+                menu_item_prev(&menu);
+            } else {
+                menu_item_inc(&menu, long_pressed_cnt);
+            }
+        }
+        if (HAL_GPIO_ReadPin(BUTTON_DOWN_GPIO_Port, BUTTON_DOWN_Pin) == GPIO_PIN_SET) {
+            if (!menu.is_editing) {
+                menu_item_next(&menu);
+            } else {
+                menu_item_dec(&menu, long_pressed_cnt);
+            }
+        }
+        if (!menu.is_editing) {
+            if (HAL_GPIO_ReadPin(BUTTON_LEFT_GPIO_Port, BUTTON_LEFT_Pin) == GPIO_PIN_SET) {
+                menu_page_prev(&menu);
+            }
+            if (HAL_GPIO_ReadPin(BUTTON_RIGHT_GPIO_Port, BUTTON_RIGHT_Pin) == GPIO_PIN_SET) {
+                menu_page_next(&menu);
+            }
+        }
+
+        long_pressed_cnt *= LONG_PRESS_MULTIPLICATOR;
+        if (long_pressed_cnt > LONG_PRESS_MULTIPLICATOR_LIMIT)
+            long_pressed_cnt = LONG_PRESS_MULTIPLICATOR_LIMIT;
+    }
+
+    if (key_pressed) {
+        /* Ensure the LCD back-light is on, then reset the timer that is
+         responsible for turning the back-light off after 5 seconds of
+         key inactivity.  Wait 10 ticks for the command to be successfully sent
+         if it cannot be sent immediately. */
+        OLEDPowerSave(false);
+        xTimerChangePeriod(sleepTimerHandle, OLED_autoSleepAfterSec * 1000, 10);
+        if (xTimerReset(sleepTimerHandle, 10) != pdPASS) {
+            /* The reset command was not executed successfully.  Take appropriate
+            action here. */
+            //TODO: process error correctly
+            error_nr = ERR_OLED_SLEEP_TIMER_RESET_FAILED;
+        }
+        is_sleeping = false;
+    } else {
+        long_pressed_cnt = 1;
+    }
+    return key_pressed;
+}
+
 void app_run(void) {
     is_sleeping = false;
 
@@ -323,61 +382,9 @@ void app_run(void) {
 
     for(;;)
     {
-        bool key_pressed = ((GPIOC->IDR & (BUTTON_BACK_Pin | BUTTON_OK_Pin)) || (GPIOB->IDR & (BUTTON_UP_Pin | BUTTON_DOWN_Pin | BUTTON_LEFT_Pin | BUTTON_RIGHT_Pin))) ? true : false;
-        if ( key_pressed && !is_sleeping ) {
-            if (HAL_GPIO_ReadPin(BUTTON_OK_GPIO_Port, BUTTON_OK_Pin) == GPIO_PIN_SET) {
-                if (menu_current_item(&menu)->editable) {
-                    menu.is_editing = true;
-                }
-            }
-            if (HAL_GPIO_ReadPin(BUTTON_BACK_GPIO_Port, BUTTON_BACK_Pin) == GPIO_PIN_SET) {
-                menu.is_editing = false;
-            }
-            if (HAL_GPIO_ReadPin(BUTTON_UP_GPIO_Port, BUTTON_UP_Pin) == GPIO_PIN_SET) {
-                if (!menu.is_editing) {
-                    menu_item_prev(&menu);
-                } else {
-                    menu_item_inc(&menu, long_pressed_cnt);
-                }
-            }
-            if (HAL_GPIO_ReadPin(BUTTON_DOWN_GPIO_Port, BUTTON_DOWN_Pin) == GPIO_PIN_SET) {
-                if (!menu.is_editing) {
-                    menu_item_next(&menu);
-                } else {
-                    menu_item_dec(&menu, long_pressed_cnt);
-                }
-            }
-            if (!menu.is_editing) {
-                if (HAL_GPIO_ReadPin(BUTTON_LEFT_GPIO_Port, BUTTON_LEFT_Pin) == GPIO_PIN_SET) {
-                    menu_page_prev(&menu);
-                }
-                if (HAL_GPIO_ReadPin(BUTTON_RIGHT_GPIO_Port, BUTTON_RIGHT_Pin) == GPIO_PIN_SET) {
-                    menu_page_next(&menu);
-                }
-            }
+        bool key_pressed = read_keypad();
 
-            long_pressed_cnt *= LONG_PRESS_MULTIPLICATOR;
-            if (long_pressed_cnt > LONG_PRESS_MULTIPLICATOR_LIMIT)
-                long_pressed_cnt = LONG_PRESS_MULTIPLICATOR_LIMIT;
-        }
-
-        if (key_pressed) {
-            /* Ensure the LCD back-light is on, then reset the timer that is
-             responsible for turning the back-light off after 5 seconds of
-             key inactivity.  Wait 10 ticks for the command to be successfully sent
-             if it cannot be sent immediately. */
-            OLEDPowerSave(false);
-            xTimerChangePeriod(sleepTimerHandle, OLED_autoSleepAfterSec * 1000, 10);
-            if (xTimerReset(sleepTimerHandle, 10) != pdPASS) {
-                /* The reset command was not executed successfully.  Take appropriate
-                action here. */
-                //TODO: process error correctly
-                error_nr = ERR_OLED_SLEEP_TIMER_RESET_FAILED;
-            }
-            is_sleeping = false;
-        } else {
-            long_pressed_cnt = 1;
-        }
+        oled_draw ();
 
         if (!key_pressed) {
             vTaskDelay(50);//Analog clock 1s

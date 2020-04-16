@@ -7,6 +7,7 @@
 
 #include <stdint.h>
 
+void oled_draw(void);
 void TaskOLED(void const * argument);
 
 #endif //FANCONTROL_OLED_TASK_H

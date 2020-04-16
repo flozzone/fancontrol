@@ -12,10 +12,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b2ea0a16-5a1b-45a1-af35-376fe4ac2e44" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/User/ltoa.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/User/ltoa.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Drivers/OLED/OLED.c" beforeDir="false" afterPath="$PROJECT_DIR$/Drivers/OLED/OLED.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Drivers/OLED/OLED_task.c" beforeDir="false" afterPath="$PROJECT_DIR$/Drivers/OLED/OLED_task.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Drivers/OLED/OLED_task.h" beforeDir="false" afterPath="$PROJECT_DIR$/Drivers/OLED/OLED_task.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Src/app.c" beforeDir="false" afterPath="$PROJECT_DIR$/Src/app.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -96,7 +97,7 @@
       <workItem from="1586725932531" duration="5840000" />
       <workItem from="1586795168897" duration="16705000" />
       <workItem from="1586888757880" duration="12791000" />
-      <workItem from="1587065720379" duration="3196000" />
+      <workItem from="1587065720379" duration="3614000" />
     </task>
     <task id="LOCAL-00001" summary="Disable T-soll when MANUAL and Fan when AUTO">
       <created>1586730409414</created>
@@ -133,7 +134,14 @@
       <option name="project" value="LOCAL" />
       <updated>1586902734014</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Fix signed/unsigned integer/long to string conversion">
+      <created>1587069029098</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1587069029098</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -158,7 +166,8 @@
     <MESSAGE value="Tune button debouncing" />
     <MESSAGE value="Introduce indrement multiplicator" />
     <MESSAGE value="Fix OLED display task" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix OLED display task" />
+    <MESSAGE value="Fix signed/unsigned integer/long to string conversion" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix signed/unsigned integer/long to string conversion" />
   </component>
   <component name="WindowStateProjectService">
     <state x="738" y="391" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1586796632125">
@@ -169,62 +178,62 @@
       <screen x="0" y="25" width="2560" height="1415" />
     </state>
     <state x="1038" y="478" key="#xdebugger.evaluate/0.25.2560.1415@0.25.2560.1415" timestamp="1586894805754" />
-    <state x="891" y="321" width="769" height="819" key="CommitChangelistDialog2" timestamp="1586902733896">
+    <state x="891" y="321" width="769" height="819" key="CommitChangelistDialog2" timestamp="1587069028792">
       <screen x="0" y="25" width="2560" height="1415" />
     </state>
-    <state x="891" y="321" width="769" height="819" key="CommitChangelistDialog2/0.25.2560.1415@0.25.2560.1415" timestamp="1586902733896" />
+    <state x="891" y="321" width="769" height="819" key="CommitChangelistDialog2/0.25.2560.1415@0.25.2560.1415" timestamp="1587069028792" />
     <state x="1063" y="491" width="426" height="479" key="FileChooserDialogImpl" timestamp="1586796628470">
       <screen x="0" y="25" width="2560" height="1415" />
     </state>
     <state x="1063" y="491" width="426" height="479" key="FileChooserDialogImpl/0.25.2560.1415@0.25.2560.1415" timestamp="1586796628470" />
-    <state width="2514" height="490" key="GridCell.Tab.0.bottom" timestamp="1587068922583">
+    <state width="2514" height="490" key="GridCell.Tab.0.bottom" timestamp="1587069340080">
       <screen x="0" y="25" width="2560" height="1415" />
     </state>
-    <state width="2514" height="490" key="GridCell.Tab.0.bottom/0.25.2560.1415@0.25.2560.1415" timestamp="1587068922583" />
-    <state width="2514" height="490" key="GridCell.Tab.0.center" timestamp="1587068922583">
+    <state width="2514" height="490" key="GridCell.Tab.0.bottom/0.25.2560.1415@0.25.2560.1415" timestamp="1587069340080" />
+    <state width="2514" height="490" key="GridCell.Tab.0.center" timestamp="1587069340080">
       <screen x="0" y="25" width="2560" height="1415" />
     </state>
-    <state width="2514" height="490" key="GridCell.Tab.0.center/0.25.2560.1415@0.25.2560.1415" timestamp="1587068922583" />
-    <state width="2514" height="490" key="GridCell.Tab.0.left" timestamp="1587068922582">
+    <state width="2514" height="490" key="GridCell.Tab.0.center/0.25.2560.1415@0.25.2560.1415" timestamp="1587069340080" />
+    <state width="2514" height="490" key="GridCell.Tab.0.left" timestamp="1587069340080">
       <screen x="0" y="25" width="2560" height="1415" />
     </state>
-    <state width="2514" height="490" key="GridCell.Tab.0.left/0.25.2560.1415@0.25.2560.1415" timestamp="1587068922582" />
-    <state width="2514" height="490" key="GridCell.Tab.0.right" timestamp="1587068922583">
+    <state width="2514" height="490" key="GridCell.Tab.0.left/0.25.2560.1415@0.25.2560.1415" timestamp="1587069340080" />
+    <state width="2514" height="490" key="GridCell.Tab.0.right" timestamp="1587069340080">
       <screen x="0" y="25" width="2560" height="1415" />
     </state>
-    <state width="2514" height="490" key="GridCell.Tab.0.right/0.25.2560.1415@0.25.2560.1415" timestamp="1587068922583" />
-    <state width="2514" height="490" key="GridCell.Tab.1.bottom" timestamp="1587068923089">
+    <state width="2514" height="490" key="GridCell.Tab.0.right/0.25.2560.1415@0.25.2560.1415" timestamp="1587069340080" />
+    <state width="2514" height="490" key="GridCell.Tab.1.bottom" timestamp="1587069339978">
       <screen x="0" y="25" width="2560" height="1415" />
     </state>
-    <state width="2514" height="490" key="GridCell.Tab.1.bottom/0.25.2560.1415@0.25.2560.1415" timestamp="1587068923089" />
-    <state width="2514" height="490" key="GridCell.Tab.1.center" timestamp="1587068923088">
+    <state width="2514" height="490" key="GridCell.Tab.1.bottom/0.25.2560.1415@0.25.2560.1415" timestamp="1587069339978" />
+    <state width="2514" height="490" key="GridCell.Tab.1.center" timestamp="1587069339977">
       <screen x="0" y="25" width="2560" height="1415" />
     </state>
-    <state width="2514" height="490" key="GridCell.Tab.1.center/0.25.2560.1415@0.25.2560.1415" timestamp="1587068923088" />
-    <state width="2514" height="490" key="GridCell.Tab.1.left" timestamp="1587068923088">
+    <state width="2514" height="490" key="GridCell.Tab.1.center/0.25.2560.1415@0.25.2560.1415" timestamp="1587069339977" />
+    <state width="2514" height="490" key="GridCell.Tab.1.left" timestamp="1587069339977">
       <screen x="0" y="25" width="2560" height="1415" />
     </state>
-    <state width="2514" height="490" key="GridCell.Tab.1.left/0.25.2560.1415@0.25.2560.1415" timestamp="1587068923088" />
-    <state width="2514" height="490" key="GridCell.Tab.1.right" timestamp="1587068923089">
+    <state width="2514" height="490" key="GridCell.Tab.1.left/0.25.2560.1415@0.25.2560.1415" timestamp="1587069339977" />
+    <state width="2514" height="490" key="GridCell.Tab.1.right" timestamp="1587069339978">
       <screen x="0" y="25" width="2560" height="1415" />
     </state>
-    <state width="2514" height="490" key="GridCell.Tab.1.right/0.25.2560.1415@0.25.2560.1415" timestamp="1587068923089" />
-    <state width="2514" height="490" key="GridCell.Tab.2.bottom" timestamp="1587068922436">
+    <state width="2514" height="490" key="GridCell.Tab.1.right/0.25.2560.1415@0.25.2560.1415" timestamp="1587069339978" />
+    <state width="2514" height="490" key="GridCell.Tab.2.bottom" timestamp="1587069339978">
       <screen x="0" y="25" width="2560" height="1415" />
     </state>
-    <state width="2514" height="490" key="GridCell.Tab.2.bottom/0.25.2560.1415@0.25.2560.1415" timestamp="1587068922436" />
-    <state width="2514" height="490" key="GridCell.Tab.2.center" timestamp="1587068922435">
+    <state width="2514" height="490" key="GridCell.Tab.2.bottom/0.25.2560.1415@0.25.2560.1415" timestamp="1587069339978" />
+    <state width="2514" height="490" key="GridCell.Tab.2.center" timestamp="1587069339978">
       <screen x="0" y="25" width="2560" height="1415" />
     </state>
-    <state width="2514" height="490" key="GridCell.Tab.2.center/0.25.2560.1415@0.25.2560.1415" timestamp="1587068922435" />
-    <state width="2514" height="490" key="GridCell.Tab.2.left" timestamp="1587068922435">
+    <state width="2514" height="490" key="GridCell.Tab.2.center/0.25.2560.1415@0.25.2560.1415" timestamp="1587069339978" />
+    <state width="2514" height="490" key="GridCell.Tab.2.left" timestamp="1587069339978">
       <screen x="0" y="25" width="2560" height="1415" />
     </state>
-    <state width="2514" height="490" key="GridCell.Tab.2.left/0.25.2560.1415@0.25.2560.1415" timestamp="1587068922435" />
-    <state width="2514" height="490" key="GridCell.Tab.2.right" timestamp="1587068922436">
+    <state width="2514" height="490" key="GridCell.Tab.2.left/0.25.2560.1415@0.25.2560.1415" timestamp="1587069339978" />
+    <state width="2514" height="490" key="GridCell.Tab.2.right" timestamp="1587069339978">
       <screen x="0" y="25" width="2560" height="1415" />
     </state>
-    <state width="2514" height="490" key="GridCell.Tab.2.right/0.25.2560.1415@0.25.2560.1415" timestamp="1587068922436" />
+    <state width="2514" height="490" key="GridCell.Tab.2.right/0.25.2560.1415@0.25.2560.1415" timestamp="1587069339978" />
     <state x="784" y="368" key="SettingsEditor" timestamp="1586796671409">
       <screen x="0" y="25" width="2560" height="1415" />
     </state>
@@ -241,21 +250,13 @@
       <screen x="0" y="25" width="2560" height="1415" />
     </state>
     <state x="966" y="480" width="1015" height="928" key="find.popup/0.25.2560.1415@0.25.2560.1415" timestamp="1587067995746" />
-    <state x="943" y="348" width="672" height="678" key="search.everywhere.popup" timestamp="1587069003972">
+    <state x="943" y="348" width="672" height="678" key="search.everywhere.popup" timestamp="1587069356133">
       <screen x="0" y="25" width="2560" height="1415" />
     </state>
-    <state x="943" y="348" width="672" height="678" key="search.everywhere.popup/0.25.2560.1415@0.25.2560.1415" timestamp="1587069003972" />
+    <state x="943" y="348" width="672" height="678" key="search.everywhere.popup/0.25.2560.1415@0.25.2560.1415" timestamp="1587069356133" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <condition expression="i=1" language="ObjectiveC" />
-          <url>file://$PROJECT_DIR$/Drivers/OLED/OLED_task.c</url>
-          <line>101</line>
-          <option name="timeStamp" value="49" />
-        </line-breakpoint>
-      </breakpoints>
       <default-breakpoints>
         <breakpoint enabled="true" log-message="true" log-stack="true" type="CidrExceptionBreakpoint" />
         <breakpoint enabled="true" type="javascript-exception" />

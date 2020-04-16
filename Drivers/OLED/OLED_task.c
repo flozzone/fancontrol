@@ -63,53 +63,55 @@ char *draw_value (menu_item_t *item, char *buf) {
     return val_ptr;
 }
 
+void oled_draw(void) {
+    int i;
+    int item_nr;
+    menu_item_t *item;
+
+    if (menu.page_changed) {
+        OLEDClear();
+        menu.page_changed = false;
+    }
+
+    OLEDString(3, 0, menu.pages[menu.cur_page]->title);
+
+    buf[0] = '\0';
+    i = 0;
+    item_nr = menu.start_item;
+    item = &menu.pages[menu.cur_page]->items[item_nr];
+    while ((item->type != MENU_TYPE_NONE)
+           && (i < MENU_MAX_ITEMS)) {
+
+        uint8_t y_coord = i * 2 + 2;
+
+        char curr = ' ';
+        if (item_nr == menu.cur_item) {
+            curr = menu.is_editing ? '#' : '>';
+        }
+
+        OLEDChar(MENU_X_ITEM_OFFSET, y_coord, curr);
+
+        OLEDString(MENU_X_ITEM_OFFSET + 1, y_coord, item->label);
+
+        char *val_ptr = draw_value(item, buf);
+        uint8_t val_x_offset = 2 + menu.pages[menu.cur_page]->max_label_length;
+        uint8_t allowed_val_len = OLED_MAX_CHARS_ON_LINE - val_x_offset;
+        size_t val_len = strlen(val_ptr);
+        if (val_len > allowed_val_len) {
+            val_ptr[allowed_val_len - 1] = '\0';
+        }
+
+        OLEDString(val_x_offset, y_coord, val_ptr);
+
+        i++;
+        item_nr++;
+        item = &menu.pages[menu.cur_page]->items[item_nr];
+    }
+}
+
 void TaskOLED(void const * argument) {
     for (;;) {
-
-        int i;
-        int item_nr;
-        menu_item_t *item;
-
-        if (menu.page_changed) {
-            OLEDClear();
-            menu.page_changed = false;
-        }
-
-        OLEDString(3, 0, menu.pages[menu.cur_page]->title);
-
-        buf[0] = '\0';
-        i = 0;
-        item_nr = menu.start_item;
-        item = &menu.pages[menu.cur_page]->items[item_nr];
-        while ((item->type != MENU_TYPE_NONE)
-                && (i < MENU_MAX_ITEMS)) {
-
-            uint8_t y_coord = i * 2 + 2;
-
-            char curr = ' ';
-            if (item_nr == menu.cur_item) {
-                curr = menu.is_editing ? '#' : '>';
-            }
-
-            OLEDChar(MENU_X_ITEM_OFFSET, y_coord, curr);
-
-            OLEDString(MENU_X_ITEM_OFFSET + 1, y_coord, item->label);
-
-            char *val_ptr = draw_value(item, buf);
-            uint8_t val_x_offset = 2 + menu.pages[menu.cur_page]->max_label_length;
-            uint8_t allowed_val_len = OLED_MAX_CHARS_ON_LINE - val_x_offset;
-            size_t val_len = strlen(val_ptr);
-            if (val_len > allowed_val_len) {
-                val_ptr[allowed_val_len - 1] = '\0';
-            }
-
-            OLEDString(val_x_offset, y_coord, val_ptr);
-
-            i++;
-            item_nr++;
-            item = &menu.pages[menu.cur_page]->items[item_nr];
-        }
-
+        oled_draw();
         osDelay(50);
     }
 }
