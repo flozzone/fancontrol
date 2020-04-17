@@ -59,9 +59,9 @@ typedef struct menu_page_s {
 
 typedef struct menu_s {
     menu_page_t **pages;
-    int num_pages;
-    int cur_page;
-    int cur_item;
+    uint8_t num_pages;
+    uint8_t cur_page;
+    uint8_t cur_item;
     bool page_changed;
     bool is_editing;
     uint8_t start_item;
@@ -74,8 +74,8 @@ void menu_page_next(menu_t *menu);
 void menu_page_prev(menu_t *menu);
 void menu_item_next(menu_t *menu);
 void menu_item_prev(menu_t *menu);
-void menu_item_inc(menu_t *menu, int multiplier);
-void menu_item_dec(menu_t *menu, int multiplier);
+void menu_item_inc(menu_t *menu, uint16_t multiplier);
+void menu_item_dec(menu_t *menu, uint16_t multiplier);
 menu_page_t *menu_cur_page(menu_t *menu);
 menu_item_t *menu_current_item(menu_t *menu);
 

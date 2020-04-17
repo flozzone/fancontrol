@@ -16,12 +16,9 @@
 
 #include "user_menu.h"
 
-#define LONG_PRESS_MULTIPLICATOR 2
-#define LONG_PRESS_MULTIPLICATOR_LIMIT 10000
-
-#define NELEMS(x)  (sizeof(x) / sizeof((x)[0]))
-
-#define MENU_PAGES ((unsigned int) )
+#define LONG_PRESS_COUNT_LIMIT 7 /* This is limited by the get_multiplicater function */
+#define DEBOUNCE_DELAY 120       /* ms to wait to check the keypad again */
+#define MULTIPLICATOR_INCREMENT_COUNT 7 /* Waits 7 * DEBOUNCE_DELAY ms for the next multiplicator increment */
 
 enum error_e {
     NO_ERROR = 0,
@@ -29,7 +26,8 @@ enum error_e {
 };
 long error_nr;
 static bool is_sleeping;
-static int long_pressed_cnt;
+static uint16_t long_pressed_cnt;
+static uint16_t cnt = 0;
 static osTimerId sleepTimerHandle;
 
 
@@ -146,9 +144,13 @@ bool read_keypad(void) {
             }
         }
 
-        long_pressed_cnt *= LONG_PRESS_MULTIPLICATOR;
-        if (long_pressed_cnt > LONG_PRESS_MULTIPLICATOR_LIMIT)
-            long_pressed_cnt = LONG_PRESS_MULTIPLICATOR_LIMIT;
+        cnt++;
+        if (cnt == MULTIPLICATOR_INCREMENT_COUNT) {
+            long_pressed_cnt++;
+            if (long_pressed_cnt > LONG_PRESS_COUNT_LIMIT)
+                long_pressed_cnt = LONG_PRESS_COUNT_LIMIT;
+            cnt = 0;
+        }
     }
 
     if (key_pressed) {
@@ -168,6 +170,7 @@ bool read_keypad(void) {
     } else {
         long_pressed_cnt = 1;
     }
+
     return key_pressed;
 }
 
@@ -190,7 +193,7 @@ void app_run(void) {
         if (!key_pressed) {
             vTaskDelay(50);
         } else {
-            vTaskDelay(120);
+            vTaskDelay(DEBOUNCE_DELAY);
         }
     }
 }
