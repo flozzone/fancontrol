@@ -69,7 +69,7 @@ typedef struct menu_s {
 
 extern menu_t menu;
 
-void menu_init(menu_t *menu, menu_page_t *pages[], unsigned int num_pages);
+void menu_init(menu_t *menu, menu_page_t *pages[]);
 void menu_page_next(menu_t *menu);
 void menu_page_prev(menu_t *menu);
 void menu_item_next(menu_t *menu);
