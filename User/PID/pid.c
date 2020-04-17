@@ -29,10 +29,15 @@ int PID_process(PID_t *pid, float _in, float _setPoint, int *out) {
 
     HAL_UART_Transmit(&huart1, testdata, strlen(testdata), 1000);
 
-    in = (int) (_in * NORMALIZE);
-    setPoint = (int) (_setPoint * NORMALIZE);
+    in = (int) (_in * 10);
+    setPoint = (int) (_setPoint * 10);
 
-    error = setPoint - in;
+    if (!pid->inverted) {
+        error = in - setPoint;
+    } else {
+        error = setPoint - in;
+    }
+
 
     pid->new_integral = pid->integral + error * pid->dt;
     pid->derivative = (error - pid->prevError)/pid->dt;
@@ -43,10 +48,6 @@ int PID_process(PID_t *pid, float _in, float _setPoint, int *out) {
     pid->prevError = error;
 
     *out /= NORMALIZE;
-
-    if (pid->inverted) {
-        *out *= -1;
-    }
 
     pid->out_norm = *out;
 

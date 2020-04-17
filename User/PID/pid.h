@@ -7,8 +7,10 @@
 
 #include "cmsis_os.h"
 
-#define NORMALIZE_I 100
-#define NORMALIZE 100.0F
+//#define NORMALIZE_I 100
+//#define NORMALIZE 100.0F
+#define NORMALIZE_I 1
+#define NORMALIZE 1
 
 typedef enum pid_mode_e {
     PID_MODE_AUTO = 0,
