@@ -7,10 +7,12 @@
 #include "tim.h"
 
 #include <string.h>
+#include <math.h>
 
 #include "ds18b20/ds18b20.h"
 #include "menu/menu.h"
 #include "ltoa.h"
+
 
 #define OLED_MAX_CHARS_ON_LINE 16
 #define OLED_BUF_SIZE OLED_MAX_CHARS_ON_LINE
@@ -50,13 +52,16 @@ char *draw_value (menu_item_t *item, char *buf, uint8_t allowed_val_len) {
                 _ultoa(*item->data_ulong, buf, 10);
                 break;
             case MENU_TYPE_FLOAT: {
-                int val = (*item->data_float) * 10;
-                itoa(val / 10, buf, 10);
-                uint8_t len = strlen(buf);
-                buf[len] = '.';
-                buf[len + 1] = 0x30 + (val % 10);
+                int val = abs(round((*item->data_float) * 10));
+                char *_buf = buf;
+
+                if (*item->data_float < 0) *_buf++ = '-';
+                itoa(val / 10, _buf, 10);
+                uint8_t len = strlen(_buf);
+                _buf[len] = '.';
+                _buf[len + 1] = 0x30 + (val % 10);
                 //memset(&buf[len + 2], ' ', OLED_BUF_SIZE - 3 - len);
-                buf[len + 2] = '\0';
+                _buf[len + 2] = '\0';
                 break;
             }
             case MENU_TYPE_ENUM: {
