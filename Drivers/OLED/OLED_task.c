@@ -17,9 +17,22 @@
 
 static char buf[OLED_BUF_SIZE];
 
+void right_justify(char *str, const size_t buf_size) {
+    size_t len = strlen(str);
 
-char *draw_value (menu_item_t *item, char *buf) {
+    str[buf_size-1] = '\0';
+
+    for (char *f = &str[len-1], *t = &str[buf_size-2]; \
+            f >= str; f--, t--) {
+        *t = *f;
+    }
+
+    memset (str, ' ', buf_size - len - 1);
+}
+
+char *draw_value (menu_item_t *item, char *buf, uint8_t allowed_val_len) {
     char *val_ptr = buf;
+
     if (item->display_cb) {
         item->display_cb(item, buf, OLED_BUF_SIZE);
     } else {
@@ -42,8 +55,8 @@ char *draw_value (menu_item_t *item, char *buf) {
                 uint8_t len = strlen(buf);
                 buf[len] = '.';
                 buf[len + 1] = 0x30 + (val % 10);
-                memset(&buf[len + 2], ' ', OLED_BUF_SIZE - 3 - len);
-                buf[OLED_BUF_SIZE - 1] = '\0';
+                //memset(&buf[len + 2], ' ', OLED_BUF_SIZE - 3 - len);
+                buf[len + 2] = '\0';
                 break;
             }
             case MENU_TYPE_ENUM: {
@@ -60,6 +73,8 @@ char *draw_value (menu_item_t *item, char *buf) {
         }
     }
 
+    right_justify (buf, allowed_val_len);
+
     return val_ptr;
 }
 
@@ -67,6 +82,8 @@ void oled_draw(void) {
     int i;
     int item_nr;
     menu_item_t *item;
+    uint8_t val_x_offset = menu.pages[menu.cur_page]->max_label_length + 2;
+    uint8_t allowed_val_len = OLED_MAX_CHARS_ON_LINE - val_x_offset;
 
     if (menu.page_changed) {
         OLEDClear();
@@ -79,6 +96,7 @@ void oled_draw(void) {
     i = 0;
     item_nr = menu.start_item;
     item = &menu.pages[menu.cur_page]->items[item_nr];
+
     while ((item->type != MENU_TYPE_NONE)
            && (i < MENU_MAX_ITEMS)) {
 
@@ -93,13 +111,12 @@ void oled_draw(void) {
 
         OLEDString(MENU_X_ITEM_OFFSET + 1, y_coord, item->label);
 
-        char *val_ptr = draw_value(item, buf);
-        uint8_t val_x_offset = 2 + menu.pages[menu.cur_page]->max_label_length;
-        uint8_t allowed_val_len = OLED_MAX_CHARS_ON_LINE - val_x_offset;
-        size_t val_len = strlen(val_ptr);
+        char *val_ptr = draw_value(item, buf, allowed_val_len);
+
+/*        size_t val_len = strlen(val_ptr);
         if (val_len > allowed_val_len) {
             val_ptr[allowed_val_len - 1] = '\0';
-        }
+        }*/
 
         OLEDString(val_x_offset, y_coord, val_ptr);
 
