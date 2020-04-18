@@ -2,6 +2,9 @@
 // Created by flozzone on 14.09.19.
 //
 
+#include <math.h>
+#include <stdint.h>
+
 #include "app.h"
 
 #include "OLED/OLED.h"
@@ -32,7 +35,9 @@ static osTimerId sleepTimerHandle;
 
 
 
-PID_t pid;
+static PID_t pid;
+fan_t fan;
+static percent_t fan_speed_percent;
 
 void sleeptimerCallback(void const * argument);
 
@@ -60,22 +65,23 @@ void app_init() {
     Ds18b20_Init(osPriorityNormal);
     DHT22_Init();
     PID_Init(&pid);
+    fan_init(&fan);
+
     pid.setPoint = 15;
     pid.out_min = 2050;
-    pid.out_max = 10000;
+    pid.out_max = FAN_RANGE_MAX;
     pid.Kp = 100;
     pid.Ki = 8;
     pid.Kd = 1;
     pid.dt = 2;
     pid.inverted = false;
     OLED_autoSleepEnabled = false;
-    fan_init(&pid.out_min, &pid.out_min);
 
     // page 1 - Fan control
     menu_pages[PAGE1]->items[PAGE1_MODE].data_uint = &pid.mode;
     menu_pages[PAGE1]->items[PAGE1_TIST].data_float = &ds18b20[0].Temperature;
     menu_pages[PAGE1]->items[PAGE1_TSOLL].data_float = &pid.setPoint;
-    menu_pages[PAGE1]->items[PAGE1_FAN].data_ulong = (uint32_t *) &htim2.Instance->CCR1;
+    menu_pages[PAGE1]->items[PAGE1_FAN].data_uint = &fan_speed_percent;
     menu_pages[PAGE1]->items[PAGE1_ERROR].data_long = &error_nr;
 
     // page 2 - PID settings
@@ -94,8 +100,6 @@ void app_init() {
     menu_pages[PAGE_PID_STATS]->items[PAGE_PID_INTEGRAL].data_long = &pid.integral;
     menu_pages[PAGE_PID_STATS]->items[PAGE_PID_PREVERROR].data_long = &pid.prevError;
     menu_pages[PAGE_PID_STATS]->items[PAGE_PID_OUT].data_long = &pid.out;
-    menu_pages[PAGE_PID_STATS]->items[PAGE_PID_OUT_NORMALIZED].data_long = &pid.out_norm;
-    menu_pages[PAGE_PID_STATS]->items[PAGE_PID_NEW_INT].data_long = &pid.new_integral;
     menu_pages[PAGE_PID_STATS]->items[PAGE_PID_DERIVATIVE].data_float = &pid.derivative;
     menu_pages[PAGE_PID_STATS]->items[PAGE_PID_OUT_MAX].data_long = &pid.out_max;
     menu_pages[PAGE_PID_STATS]->items[PAGE_PID_OUT_MIN].data_long = &pid.out_min;
@@ -108,6 +112,22 @@ void app_init() {
     sleepTimerHandle = osTimerCreate(osTimer(sleepTimer), osTimerOnce, NULL);
 
     set_control_mode(PID_MODE_AUTO);
+}
+
+uint16_t get_increment(uint16_t num) {
+    uint16_t ret = 1;
+    switch (num) {
+        case 0:
+        case 1:
+        case 2: ret = 1; break;
+        case 3: ret = 2; break;
+        case 4: ret = 5; break;
+        default: {
+            ret = pow(10, num - 4);
+        }
+    }
+
+    return ret;
 }
 
 bool read_keypad(void) {
@@ -125,14 +145,14 @@ bool read_keypad(void) {
             if (!menu.is_editing) {
                 menu_item_prev(&menu);
             } else {
-                menu_item_inc(&menu, long_pressed_cnt);
+                menu_item_edit(&menu, get_increment(long_pressed_cnt));
             }
         }
         if (HAL_GPIO_ReadPin(BUTTON_DOWN_GPIO_Port, BUTTON_DOWN_Pin) == GPIO_PIN_SET) {
             if (!menu.is_editing) {
                 menu_item_next(&menu);
             } else {
-                menu_item_dec(&menu, long_pressed_cnt);
+                menu_item_edit(&menu, -get_increment(long_pressed_cnt));
             }
         }
         if (!menu.is_editing) {

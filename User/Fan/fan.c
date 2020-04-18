@@ -5,44 +5,33 @@
 #include "fan.h"
 #include "tim.h"
 
-#define FAN_RANGE_MIN 0
-#define FAN_RANGE_MAX 10000
-#define FAN_RANGE (FAN_RANGE_MAX - FAN_RANGE_MIN)
 
-
-static int *fan_min;
-static int *fan_max;
-
-void fan_init(int *min, int *max) {
-    fan_min = min;
-    fan_max = max;
+void fan_init(fan_t *fan) {
+    fan->inverted = false;
+    fan_set_speed(fan, FAN_RANGE_MIN);
 }
 
+void fan_set_speed (const fan_t *fan, speed_t speed) {
+    speed_t val = speed;
 
-int invert(int speed) {
-    return 10000 - speed;
+    if (speed < FAN_RANGE_MIN || speed > FAN_RANGE_MAX) {
+        //TODO: handle error
+        return;
+    }
+
+    if (fan->inverted) {
+        val = FAN_RANGE_MAX - speed;
+    }
+
+    htim2.Instance->CCR1 = val;
 }
 
-void fan_set_speed (int speed) {
-    int _min, _max;
-    _min = *fan_min;
-    _max = *fan_max;
+speed_t fan_get_speed(const fan_t *fan) {
+    speed_t speed = htim2.Instance->CCR1;
 
-    htim2.Instance->CCR1 = invert(speed);
-}
+    if (fan->inverted) {
+        speed = FAN_RANGE_MAX - htim2.Instance->CCR1;
+    }
 
-int fan_speed_to_percent(int speed) {
-    return invert(speed) / 100;
-}
-
-int fan_percent_to_speed(int percent) {
-    return invert(percent * 100);
-}
-
-int fan_get_percent() {
-    return fan_speed_to_percent(htim2.Instance->CCR1);
-}
-
-void fan_set_percent(int percent) {
-    htim2.Instance->CCR1 = fan_percent_to_speed(percent);
+    return speed;
 }

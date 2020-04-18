@@ -11,6 +11,7 @@
 #define MENU_MAX_LABEL 14
 #define MENU_MAX_TITLE 16
 #define MENU_MAX_ITEMS 6
+#define MENU_MAX_CHOICE_BUF_LEN 8
 #define MENU_X_ITEM_OFFSET 0
 
 typedef enum menu_item_type {
@@ -27,16 +28,16 @@ typedef enum menu_item_type {
 
 typedef struct menu_item_s menu_item_t;
 
-typedef int (*menu_item_id_cb_t)(menu_item_t *item, int multiplier);
+typedef int (*menu_item_id_cb_t)(menu_item_t *item, int16_t incdec);
 typedef int (*menu_item_display_cb_t)(menu_item_t *item, char *buffer, int n);
 
 typedef struct menu_item_s {
     const char label[MENU_MAX_LABEL];
     const menu_item_type_e type;
     bool editable;
-    int min;
-    int max;
-    const menu_item_id_cb_t inc_cb;
+    int16_t min;
+    int16_t max;
+    const menu_item_id_cb_t item_edit_cb;
     const menu_item_id_cb_t dec_cb;
     const menu_item_display_cb_t display_cb;
     union {
@@ -62,9 +63,9 @@ typedef struct menu_s {
     uint8_t num_pages;
     uint8_t cur_page;
     uint8_t cur_item;
+    uint8_t start_item;
     bool page_changed;
     bool is_editing;
-    uint8_t start_item;
 } menu_t;
 
 extern menu_t menu;
@@ -74,8 +75,7 @@ void menu_page_next(menu_t *menu);
 void menu_page_prev(menu_t *menu);
 void menu_item_next(menu_t *menu);
 void menu_item_prev(menu_t *menu);
-void menu_item_inc(menu_t *menu, uint16_t multiplier);
-void menu_item_dec(menu_t *menu, uint16_t multiplier);
+void menu_item_edit(menu_t *menu, int16_t incdec);
 menu_page_t *menu_cur_page(menu_t *menu);
 menu_item_t *menu_current_item(menu_t *menu);
 

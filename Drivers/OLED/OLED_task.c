@@ -33,7 +33,6 @@ void right_justify(char *str, const size_t buf_size) {
 }
 
 char *draw_value (menu_item_t *item, char *buf, uint8_t allowed_val_len) {
-    char *val_ptr = buf;
 
     if (item->display_cb) {
         item->display_cb(item, buf, OLED_BUF_SIZE);
@@ -67,8 +66,18 @@ char *draw_value (menu_item_t *item, char *buf, uint8_t allowed_val_len) {
             case MENU_TYPE_ENUM: {
                 // TODO: remove this workaround: check for choices index and number of items
                 if (*item->data_uint < 2) {
-                    val_ptr = item->choices[*item->data_uint];
+                    //val_ptr = item->choices[*item->data_uint];
+                    strncpy(buf, item->choices[*item->data_uint], MENU_MAX_CHOICE_BUF_LEN);
                 }
+                break;
+            }
+            case MENU_TYPE_BOOL: {
+         /*       if (*item->data_bool == false) {
+                    strcpy(buf, "OFF");
+                } else {
+                    strcpy(buf, "ON");
+                }*/
+                strcpy(buf, "NA");
                 break;
             }
             default: {
@@ -80,7 +89,7 @@ char *draw_value (menu_item_t *item, char *buf, uint8_t allowed_val_len) {
 
     right_justify (buf, allowed_val_len);
 
-    return val_ptr;
+    return buf;
 }
 
 void oled_draw(void) {

@@ -5,6 +5,7 @@
 #ifndef FANCONTROL_PID_H
 #define FANCONTROL_PID_H
 
+#include <Fan/fan.h>
 #include "cmsis_os.h"
 
 //#define NORMALIZE_I 100
@@ -35,16 +36,16 @@ typedef struct {
     uint16_t mode;
 
     // debugging
-    int32_t new_integral;
     float derivative;
-    int32_t out;
-    int32_t out_norm;
+    speed_t out;
 
     osThreadId 	taskHandle;
 } PID_t;
 
 void PID_Init(PID_t *pid);
-int PID_process(PID_t *pid, float in, float setPoint, int *out);
+int PID_process(PID_t *pid, float in, float setPoint, speed_t *out);
 void TaskPID(void const * pid);
+int32_t get_out_min(PID_t *pid);
+int32_t get_out_max(PID_t *pid);
 
 #endif //FANCONTROL_PID_H

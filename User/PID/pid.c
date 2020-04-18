@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <Fan/fan.h>
+#include "app.h"
 
 char testdata[] = "data\n\r";
 
@@ -21,10 +22,10 @@ void PID_Init(PID_t *pid) {
     pid->taskHandle = osThreadCreate(osThread(myTask_PID), pid);
 }
 
-int PID_process(PID_t *pid, float _in, float _setPoint, int *out) {
+int PID_process(PID_t *pid, float _in, float _setPoint, speed_t *out) {
     int32_t in, setPoint;
     int64_t error;
-    //int64_t new_integral;
+    int64_t new_integral;
     //float derivative;
 
     HAL_UART_Transmit(&huart1, testdata, strlen(testdata), 1000);
@@ -38,42 +39,38 @@ int PID_process(PID_t *pid, float _in, float _setPoint, int *out) {
         error = setPoint - in;
     }
 
-
-    pid->new_integral = pid->integral + error * pid->dt;
+    new_integral = pid->integral + error * pid->dt;
     pid->derivative = (error - pid->prevError)/pid->dt;
     
-    *out = (pid->Kp * NORMALIZE_I * error) + (pid->Ki * NORMALIZE_I * pid->new_integral) + (pid->Kd * NORMALIZE_I * pid->derivative);
+    *out = (pid->Kp * error) + (pid->Ki * new_integral) + (pid->Kd * pid->derivative);
+
     pid->out = *out;
 
     pid->prevError = error;
-
-    *out /= NORMALIZE;
-
-    pid->out_norm = *out;
 
     if (*out < pid->out_min) {
         *out = pid->out_min;
     } else if (*out > pid->out_max) {
         *out = pid->out_max;
     } else {
-        pid->integral = pid->new_integral;
+        pid->integral = new_integral;
     }
 }
 
 typedef struct {
     float temp;
     float setPoint;
-    int pwm;
+    speed_t pwm;
 } data_serial_t;
 
 void TaskPID(void const * _pid) {
     PID_t *pid = (PID_t *)_pid;
 
     for (;;) {
-        int pwm;
+        speed_t pwm;
         if (pid->mode == PID_MODE_AUTO) {
             PID_process(pid, ds18b20[0].Temperature, pid->setPoint, &pwm);
-            fan_set_speed(pwm);
+            fan_set_speed(&fan, pwm);
         }
 
         data_serial_t data;

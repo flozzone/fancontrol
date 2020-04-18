@@ -5,6 +5,10 @@
 #ifndef FANCONTROL_APP_H
 #define FANCONTROL_APP_H
 
+#include <Fan/fan.h>
+
+extern fan_t fan;
+
 void app_init();
 void app_run(void);
 
