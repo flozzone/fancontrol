@@ -35,11 +35,24 @@ typedef struct menu_item_s {
     const char label[MENU_MAX_LABEL];
     const menu_item_type_e type;
     bool editable;
-    int16_t min;
-    int16_t max;
+    union {
+        int16_t min_int;
+        uint16_t min_uint;
+        int32_t min_long;
+        uint32_t min_ulong;
+        float min_float;
+        double min_double;
+    };
+    union {
+        int16_t max_int;
+        uint16_t max_uint;
+        int32_t max_long;
+        uint32_t max_ulong;
+        float max_float;
+        double max_double;
+    };
     const menu_item_id_cb_t item_edit_cb;
-    const menu_item_id_cb_t dec_cb;
-    const menu_item_display_cb_t display_cb;
+    const menu_item_display_cb_t item_display_cb;
     union {
         int16_t *data_int;
         uint16_t *data_uint;

@@ -91,10 +91,10 @@ void menu_item_edit(menu_t *menu, int16_t incdec) {
                 case MENU_TYPE_ENUM:
                 case MENU_TYPE_UINT: {
                     uint16_t val = (*item->data_uint) + incdec;
-                    if (val < item->min) {
-                        *item->data_uint = item->min;
-                    } else if (val > item->max) {
-                        *item->data_uint = item->max;
+                    if (val < item->min_uint) {
+                        *item->data_uint = item->min_uint;
+                    } else if (val > item->max_uint) {
+                        *item->data_uint = item->max_uint;
                     } else {
                         *item->data_uint = val;
                     }
@@ -102,10 +102,10 @@ void menu_item_edit(menu_t *menu, int16_t incdec) {
                 }
                 case MENU_TYPE_ULONG: {
                     uint32_t val = (*item->data_ulong) + incdec;
-                    if (val < item->min) {
-                        *item->data_ulong = item->min;
-                    } else if (val > item->max) {
-                        *item->data_ulong = item->max;
+                    if (val < item->min_ulong) {
+                        *item->data_ulong = item->min_ulong;
+                    } else if (val > item->max_ulong) {
+                        *item->data_ulong = item->max_ulong;
                     } else {
                         *item->data_ulong = val;
                     }
@@ -113,10 +113,10 @@ void menu_item_edit(menu_t *menu, int16_t incdec) {
                 }
                 case MENU_TYPE_INT: {
                     int16_t val = (*item->data_int) + incdec;
-                    if (val < item->min) {
-                        *item->data_int = item->min;
-                    } else if (val > item->max) {
-                        *item->data_int = item->max;
+                    if (val < item->min_int) {
+                        *item->data_int = item->min_int;
+                    } else if (val > item->max_int) {
+                        *item->data_int = item->max_int;
                     } else {
                         *item->data_int = val;
                     }
@@ -124,10 +124,10 @@ void menu_item_edit(menu_t *menu, int16_t incdec) {
                 }
                 case MENU_TYPE_LONG: {
                     int32_t val = (*item->data_long) + incdec;
-                    if (val < item->min) {
-                        *item->data_long = item->min;
-                    } else if (val > item->max) {
-                        *item->data_long = item->max;
+                    if (val < item->min_long) {
+                        *item->data_long = item->min_long;
+                    } else if (val > item->max_long) {
+                        *item->data_long = item->max_long;
                     } else {
                         *item->data_long = val;
                     }
@@ -135,10 +135,10 @@ void menu_item_edit(menu_t *menu, int16_t incdec) {
                 }
                 case MENU_TYPE_DOUBLE: {
                     double val = (*item->data_double) + incdec;
-                    if (val < item->min) {
-                        *item->data_double = item->min;
-                    } else if (val > item->max) {
-                        *item->data_double = item->max;
+                    if (val < item->min_double) {
+                        *item->data_double = item->min_double;
+                    } else if (val > item->max_double) {
+                        *item->data_double = item->max_double;
                     } else {
                         *item->data_double = val;
                     }
@@ -146,10 +146,10 @@ void menu_item_edit(menu_t *menu, int16_t incdec) {
                 }
                 case MENU_TYPE_FLOAT: {
                     float val = (*item->data_float) + 0.1F * incdec;
-                    if (val < item->min) {
-                        *item->data_float = item->min;
-                    } else if (val > item->max) {
-                        *item->data_float = item->max;
+                    if (val < item->min_float) {
+                        *item->data_float = item->min_float;
+                    } else if (val > item->max_float) {
+                        *item->data_float = item->max_float;
                     } else {
                         *item->data_float = val;
                     }

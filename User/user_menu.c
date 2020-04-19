@@ -1,11 +1,12 @@
 //
 // Created by flozzone on 17.04.20.
 //
-
-#include <Fan/fan.h>
-#include <PID/pid.h>
-#include <app.h>
 #include <stdlib.h>
+#include <float.h>
+
+#include "fan/fan.h"
+#include "pid/pid.h"
+#include "app.h"
 #include "user_menu.h"
 
 void set_control_mode(uint8_t mode);
@@ -22,8 +23,8 @@ menu_page_t page1 = {
                         .label = "Mode",
                         .type = MENU_TYPE_ENUM,
                         .editable = true,
-                        .min = 0,
-                        .max = 1,
+                        .min_uint = 0,
+                        .max_uint = 1,
                         .item_edit_cb = mode_edit_cb,
                         .choices = mode_choices
                 },
@@ -31,31 +32,31 @@ menu_page_t page1 = {
                         .label = "T ist",
                         .type = MENU_TYPE_FLOAT,
                         .editable = false,
-                        .min = 0,
-                        .max = 70
+                        .min_float = 0,
+                        .max_float = 70
                 },
                 {
                         .label = "T soll",
                         .type = MENU_TYPE_FLOAT,
                         .editable = true,
-                        .min = 0,
-                        .max = 400
+                        .min_float = 0,
+                        .max_float = 400
                 },
                 {
-                        .label = "Fan",
-                        .type = MENU_TYPE_ULONG,
+                        .label = "Fan [%]",
+                        .type = MENU_TYPE_UINT,
                         .editable = true,
-                        .min = 0,
-                        .max = 100,
+                        .min_uint = 0,
+                        .max_uint = 100,
                         .item_edit_cb = fan_edit_cb,
-                        .display_cb = fan_disp_cb
+                        .item_display_cb = fan_disp_cb
                 },
                 {
                         .label = "Error",
-                        .type = MENU_TYPE_LONG,
+                        .type = MENU_TYPE_INT,
                         .editable = false,
-                        .min = INT16_MIN,
-                        .max = INT16_MAX
+                        .min_int = INT16_MIN,
+                        .max_int = INT16_MAX
                 },
                 {
                         .type = MENU_TYPE_NONE
@@ -67,38 +68,38 @@ menu_page_t page2 = {
         .items = {
                 {
                         .label = "P",
-                        .type = MENU_TYPE_LONG,
+                        .type = MENU_TYPE_INT,
                         .editable = true,
-                        .min = INT32_MIN,
-                        .max = INT32_MAX
+                        .min_int = INT16_MIN,
+                        .max_int = INT16_MAX
                 },
                 {
                         .label = "I",
-                        .type = MENU_TYPE_LONG,
+                        .type = MENU_TYPE_INT,
                         .editable = true,
-                        .min = INT32_MIN,
-                        .max = INT32_MAX
+                        .min_int = INT16_MIN,
+                        .max_int = INT16_MAX
                 },
                 {
                         .label = "D",
-                        .type = MENU_TYPE_LONG,
+                        .type = MENU_TYPE_INT,
                         .editable = true,
-                        .min = INT32_MIN,
-                        .max = INT32_MAX
+                        .min_int = INT16_MIN,
+                        .max_int = INT16_MAX
                 },
                 {
                         .label = "MIN",
-                        .type = MENU_TYPE_LONG,
+                        .type = MENU_TYPE_INT,
                         .editable = true,
-                        .min = 0,
-                        .max = INT32_MAX
+                        .min_int = 0,
+                        .max_int = INT16_MAX
                 },
                 {
                         .label = "MAX",
-                        .type = MENU_TYPE_LONG,
+                        .type = MENU_TYPE_INT,
                         .editable = true,
-                        .min = 0,
-                        .max = INT32_MAX
+                        .min_int = 0,
+                        .max_int = INT16_MAX
                 },
                 {
                         .type = MENU_TYPE_NONE
@@ -111,24 +112,24 @@ menu_page_t page3 = {
         .items = {
                 {
                         .label = "cycle time",
-                        .type = MENU_TYPE_LONG,
+                        .type = MENU_TYPE_INT,
                         .editable = true,
-                        .min = 1,
-                        .max = INT32_MAX
+                        .min_int = 1,
+                        .max_int = INT16_MAX
                 },
                 {
                         .label = "OLED sleep",
                         .type = MENU_TYPE_BOOL,
                         .editable = true,
-                        .min = 0,
-                        .max = 1,
+                        .min_uint = 0,
+                        .max_uint = 1,
                 },
                 {
                         .label = "sleep after",
-                        .type = MENU_TYPE_ULONG,
+                        .type = MENU_TYPE_UINT,
                         .editable = true,
-                        .min = 1,
-                        .max = UINT32_MAX
+                        .min_uint = 1,
+                        .max_uint = UINT16_MAX
                 },
                 {
                         .type = MENU_TYPE_NONE
@@ -139,12 +140,12 @@ menu_page_t page3 = {
 menu_page_t page_pid_stat = {
         .title = "PID stats",
         .items = {
-                { .label = "err", .type = MENU_TYPE_LONG,    .editable = false, },
-                { .label = "int", .type = MENU_TYPE_LONG,    .editable = false, },
-                { .label = "out", .type = MENU_TYPE_LONG,    .editable = false, },
-                { .label = "der", .type = MENU_TYPE_FLOAT,   .editable = false, },
-                { .label = "min", .type = MENU_TYPE_LONG,    .editable = false, },
-                { .label = "max", .type = MENU_TYPE_LONG,    .editable = false, },
+                { .label = "err", .type = MENU_TYPE_LONG,    .editable = false,     .min_long = INT32_MIN,   .max_long = INT32_MAX },
+                { .label = "int", .type = MENU_TYPE_INT,    .editable = false,      .min_int = INT16_MIN,   .max_int = INT16_MAX },
+                { .label = "out", .type = MENU_TYPE_INT,    .editable = false,      .min_int = INT16_MIN,   .max_int = INT16_MAX },
+                { .label = "der", .type = MENU_TYPE_FLOAT,   .editable = false,     .min_float = FLT_MIN,     .max_float = FLT_MAX },
+                { .label = "min", .type = MENU_TYPE_INT,    .editable = false,      .min_int = INT16_MIN,   .max_int = INT16_MAX },
+                { .label = "max", .type = MENU_TYPE_INT,    .editable = false,      .min_int = INT16_MIN,   .max_int = INT16_MAX },
                 { .type = MENU_TYPE_NONE }
         }
 };
@@ -162,10 +163,10 @@ int fan_edit_cb(menu_item_t *item, int16_t incdec) {
     int16_t val = *item->data_uint + incdec;
     percent_t percent;
 
-    if (val < item->min) {
-        percent = item->min;
-    } else if (val > item->max) {
-        percent = item->max;
+    if (val < item->min_uint) {
+        percent = item->min_uint;
+    } else if (val > item->max_uint) {
+        percent = item->max_uint;
     } else {
         percent = val;
     }
@@ -200,10 +201,10 @@ int mode_edit_cb(menu_item_t *item, int16_t incdec) {
 
     int16_t val = *item->data_uint + incdec;
 
-    if (val < item->min) {
-        set_control_mode(item->max);
-    } else if (val > item->max) {
-        set_control_mode(item->min);
+    if (val < item->min_uint) {
+        set_control_mode(item->max_uint);
+    } else if (val > item->max_uint) {
+        set_control_mode(item->min_uint);
     } else {
         set_control_mode(val);
     }
