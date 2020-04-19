@@ -2,8 +2,8 @@
 // Created by flozzone on 12.09.19.
 //
 
-#include "OLED.h"
-#include "OLED_task.h"
+#include "oled.h"
+#include "oled_task.h"
 #include "tim.h"
 
 #include <string.h>
@@ -34,8 +34,8 @@ void right_justify(char *str, const size_t buf_size) {
 
 char *draw_value (menu_item_t *item, char *buf, uint8_t allowed_val_len) {
 
-    if (item->display_cb) {
-        item->display_cb(item, buf, OLED_BUF_SIZE);
+    if (item->item_display_cb) {
+        item->item_display_cb(item, buf, OLED_BUF_SIZE);
     } else {
         switch (item->type) {
             case MENU_TYPE_INT:

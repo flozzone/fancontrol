@@ -7,8 +7,8 @@
 
 #define USE_U8X8
 
-#include "OLED_task.h"
-#include "OLED_driver.h"
+#include "oled_task.h"
+#include "oled_driver.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>

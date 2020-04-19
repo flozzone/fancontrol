@@ -2,7 +2,7 @@
 // Created by flozzone on 12.09.19.
 //
 
-#include "OLED.h"
+#include "oled.h"
 #include "gpio.h"
 #include "spi.h"
 

@@ -1,7 +1,7 @@
 
 
 #include "ds18b20.h"
-#include "OLED/OLED.h"
+#include "oled/oled.h"
 #include "tim.h"
 #include "dht22/dht22.h"
 

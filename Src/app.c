@@ -7,14 +7,14 @@
 
 #include "app.h"
 
-#include "OLED/OLED.h"
+#include "oled/oled.h"
 #include "menu/menu.h"
 
 #include "ds18b20/ds18b20.h"
 #include "dht22/dht22.h"
 
-#include "PID/pid.h"
-#include "Fan/fan.h"
+#include "pid/pid.h"
+#include "fan/fan.h"
 #include "tim.h"
 
 #include "user_menu.h"
@@ -85,24 +85,24 @@ void app_init() {
     menu_pages[PAGE1]->items[PAGE1_ERROR].data_long = &error_nr;
 
     // page 2 - PID settings
-    menu_pages[PAGE2]->items[0].data_long = &pid.Kp;
-    menu_pages[PAGE2]->items[1].data_long = &pid.Ki;
-    menu_pages[PAGE2]->items[2].data_long = &pid.Kd;
-    menu_pages[PAGE2]->items[3].data_long = &pid.out_min;
-    menu_pages[PAGE2]->items[4].data_long = &pid.out_max;
+    menu_pages[PAGE2]->items[0].data_int = &pid.Kp;
+    menu_pages[PAGE2]->items[1].data_int = &pid.Ki;
+    menu_pages[PAGE2]->items[2].data_int = &pid.Kd;
+    menu_pages[PAGE2]->items[3].data_int = &pid.out_min;
+    menu_pages[PAGE2]->items[4].data_int = &pid.out_max;
 
     // page 3 - Settings
-    menu_pages[PAGE3]->items[0].data_long = &pid.dt;
+    menu_pages[PAGE3]->items[0].data_int = &pid.dt;
     menu_pages[PAGE3]->items[1].data_bool = &OLED_autoSleepEnabled;
     menu_pages[PAGE3]->items[2].data_ulong = &OLED_autoSleepAfterSec;
 
     // page 4 - PID stats
-    menu_pages[PAGE_PID_STATS]->items[PAGE_PID_INTEGRAL].data_long = &pid.integral;
+    menu_pages[PAGE_PID_STATS]->items[PAGE_PID_INTEGRAL].data_int = &pid.integral;
     menu_pages[PAGE_PID_STATS]->items[PAGE_PID_PREVERROR].data_long = &pid.prevError;
-    menu_pages[PAGE_PID_STATS]->items[PAGE_PID_OUT].data_long = &pid.out;
-    menu_pages[PAGE_PID_STATS]->items[PAGE_PID_DERIVATIVE].data_float = &pid.derivative;
-    menu_pages[PAGE_PID_STATS]->items[PAGE_PID_OUT_MAX].data_long = &pid.out_max;
-    menu_pages[PAGE_PID_STATS]->items[PAGE_PID_OUT_MIN].data_long = &pid.out_min;
+    menu_pages[PAGE_PID_STATS]->items[PAGE_PID_OUT].data_int = &pid.debug_out;
+    menu_pages[PAGE_PID_STATS]->items[PAGE_PID_DERIVATIVE].data_float = &pid.debug_derivative;
+    menu_pages[PAGE_PID_STATS]->items[PAGE_PID_OUT_MAX].data_int = &pid.out_max;
+    menu_pages[PAGE_PID_STATS]->items[PAGE_PID_OUT_MIN].data_int = &pid.out_min;
 
 
     menu_init(&menu, menu_pages);

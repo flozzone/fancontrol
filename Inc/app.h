@@ -5,7 +5,7 @@
 #ifndef FANCONTROL_APP_H
 #define FANCONTROL_APP_H
 
-#include <Fan/fan.h>
+#include <fan/fan.h>
 
 extern fan_t fan;
 

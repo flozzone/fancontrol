@@ -1,15 +1,17 @@
 //
 // Created by flozzone on 10.09.19.
 //
+#include <stdio.h>
+#include <string.h>
 
 #include "pid.h"
 #include "ds18b20/ds18b20.h"
 #include "tim.h"
 #include "usart.h"
-#include <stdio.h>
-#include <string.h>
-#include <Fan/fan.h>
+#include "fan/fan.h"
 #include "app.h"
+
+#define PID_FLOAT_PRECISION 10
 
 char testdata[] = "data\n\r";
 
@@ -24,14 +26,15 @@ void PID_Init(PID_t *pid) {
 
 int PID_process(PID_t *pid, float _in, float _setPoint, speed_t *out) {
     int32_t in, setPoint;
-    int64_t error;
-    int64_t new_integral;
-    //float derivative;
+    int32_t error;
+    int32_t new_integral;
+    float derivative;
+    uint32_t new_out;
 
     HAL_UART_Transmit(&huart1, testdata, strlen(testdata), 1000);
 
-    in = (int) (_in * 10);
-    setPoint = (int) (_setPoint * 10);
+    in = (int) (_in * PID_FLOAT_PRECISION);
+    setPoint = (int) (_setPoint * PID_FLOAT_PRECISION);
 
     if (!pid->inverted) {
         error = in - setPoint;
@@ -40,21 +43,23 @@ int PID_process(PID_t *pid, float _in, float _setPoint, speed_t *out) {
     }
 
     new_integral = pid->integral + error * pid->dt;
-    pid->derivative = (error - pid->prevError)/pid->dt;
-    
-    *out = (pid->Kp * error) + (pid->Ki * new_integral) + (pid->Kd * pid->derivative);
+    derivative = (error - pid->prevError)/pid->dt;
 
-    pid->out = *out;
+    new_out = (pid->Kp * error) + (pid->Ki * new_integral) + (pid->Kd * derivative);
 
     pid->prevError = error;
 
-    if (*out < pid->out_min) {
+    if (new_out < pid->out_min) {
         *out = pid->out_min;
-    } else if (*out > pid->out_max) {
+    } else if (new_out > pid->out_max) {
         *out = pid->out_max;
     } else {
         pid->integral = new_integral;
+        *out = new_out;
     }
+
+    pid->debug_out = *out;
+    pid->debug_derivative = derivative;
 }
 
 typedef struct {

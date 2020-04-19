@@ -2,7 +2,7 @@
 // Created by flozzone on 09.09.19.
 //
 
-#include "OLED.h"
+#include "oled.h"
 #include "cmsis_os.h"
 
 osThreadId 	OLEDTaskHandle;
