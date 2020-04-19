@@ -32,66 +32,6 @@ void right_justify(char *str, const size_t buf_size) {
     memset (str, ' ', buf_size - len - 1);
 }
 
-char *draw_value (menu_item_t *item, char *buf, uint8_t allowed_val_len) {
-
-    if (item->item_display_cb) {
-        item->item_display_cb(item, buf, OLED_BUF_SIZE);
-    } else {
-        switch (item->type) {
-            case MENU_TYPE_INT:
-                itoa(*item->data_int, buf, 10);
-                break;
-            case MENU_TYPE_UINT:
-                utoa(*item->data_uint, buf, 10);
-                break;
-            case MENU_TYPE_LONG:
-                _ltoa(*item->data_long, buf, 10);
-                break;
-            case MENU_TYPE_ULONG:
-                _ultoa(*item->data_ulong, buf, 10);
-                break;
-            case MENU_TYPE_FLOAT: {
-                int val = abs(round((*item->data_float) * 10));
-                char *_buf = buf;
-
-                if (*item->data_float < 0) *_buf++ = '-';
-                itoa(val / 10, _buf, 10);
-                uint8_t len = strlen(_buf);
-                _buf[len] = '.';
-                _buf[len + 1] = 0x30 + (val % 10);
-                //memset(&buf[len + 2], ' ', OLED_BUF_SIZE - 3 - len);
-                _buf[len + 2] = '\0';
-                break;
-            }
-            case MENU_TYPE_ENUM: {
-                // TODO: remove this workaround: check for choices index and number of items
-                if (*item->data_uint < 2) {
-                    //val_ptr = item->choices[*item->data_uint];
-                    strncpy(buf, item->choices[*item->data_uint], MENU_MAX_CHOICE_BUF_LEN);
-                }
-                break;
-            }
-            case MENU_TYPE_BOOL: {
-         /*       if (*item->data_bool == false) {
-                    strcpy(buf, "OFF");
-                } else {
-                    strcpy(buf, "ON");
-                }*/
-                strcpy(buf, "NA");
-                break;
-            }
-            default: {
-                strcpy(buf, "NA");
-                break;
-            }
-        }
-    }
-
-    right_justify (buf, allowed_val_len);
-
-    return buf;
-}
-
 void oled_draw(void) {
     int i;
     int item_nr;
@@ -125,12 +65,9 @@ void oled_draw(void) {
 
         OLEDString(MENU_X_ITEM_OFFSET + 1, y_coord, item->label);
 
-        char *val_ptr = draw_value(item, buf, allowed_val_len);
+        char *val_ptr = menu_item_print (item, buf, allowed_val_len);
 
-/*        size_t val_len = strlen(val_ptr);
-        if (val_len > allowed_val_len) {
-            val_ptr[allowed_val_len - 1] = '\0';
-        }*/
+        right_justify (buf, allowed_val_len);
 
         OLEDString(val_x_offset, y_coord, val_ptr);
 

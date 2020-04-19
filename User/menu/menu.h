@@ -88,6 +88,7 @@ void menu_page_next(menu_t *menu);
 void menu_page_prev(menu_t *menu);
 void menu_item_next(menu_t *menu);
 void menu_item_prev(menu_t *menu);
+char *menu_item_print (menu_item_t *item, char *buf, uint8_t buf_len);
 void menu_item_edit(menu_t *menu, int16_t incdec);
 menu_page_t *menu_cur_page(menu_t *menu);
 menu_item_t *menu_current_item(menu_t *menu);

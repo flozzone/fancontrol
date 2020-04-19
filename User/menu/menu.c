@@ -5,6 +5,8 @@
 #include "menu.h"
 #include <string.h>
 #include <math.h>
+#include <stdlib.h>
+#include <ltoa.h>
 
 menu_t menu;
 
@@ -77,6 +79,63 @@ menu_page_t *menu_cur_page(menu_t *menu) {
 }
 menu_item_t *menu_current_item(menu_t *menu) {
     return &menu->pages[menu->cur_page]->items[menu->cur_item];
+}
+
+char *menu_item_print (menu_item_t *item, char *buf, uint8_t buf_len) {
+
+    if (item->item_display_cb) {
+        item->item_display_cb(item, buf, buf_len);
+    } else {
+        switch (item->type) {
+            case MENU_TYPE_INT:
+                itoa(*item->data_int, buf, 10);
+                break;
+            case MENU_TYPE_UINT:
+                utoa(*item->data_uint, buf, 10);
+                break;
+            case MENU_TYPE_LONG:
+                _ltoa(*item->data_long, buf, 10);
+                break;
+            case MENU_TYPE_ULONG:
+                _ultoa(*item->data_ulong, buf, 10);
+                break;
+            case MENU_TYPE_FLOAT: {
+                int val = abs(round((*item->data_float) * 10));
+                char *_buf = buf;
+
+                if (*item->data_float < 0) *_buf++ = '-';
+                itoa(val / 10, _buf, 10);
+                uint8_t len = strlen(_buf);
+                _buf[len] = '.';
+                _buf[len + 1] = 0x30 + (val % 10);
+                _buf[len + 2] = '\0';
+                break;
+            }
+            case MENU_TYPE_ENUM: {
+                // TODO: remove this workaround: check for choices index and number of items
+                if (*item->data_uint < 2) {
+                    //val_ptr = item->choices[*item->data_uint];
+                    strncpy(buf, item->choices[*item->data_uint], buf_len);
+                }
+                break;
+            }
+            case MENU_TYPE_BOOL: {
+                /*       if (*item->data_bool == false) {
+                           strcpy(buf, "OFF");
+                       } else {
+                           strcpy(buf, "ON");
+                       }*/
+                strncpy(buf, "NA", buf_len);
+                break;
+            }
+            default: {
+                strncpy(buf, "NA", buf_len);
+                break;
+            }
+        }
+    }
+
+    return buf;
 }
 
 void menu_item_edit(menu_t *menu, int16_t incdec) {
