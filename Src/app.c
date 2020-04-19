@@ -4,6 +4,7 @@
 
 #include <math.h>
 #include <stdint.h>
+#include <serial.h>
 
 #include "app.h"
 
@@ -37,6 +38,7 @@ static osTimerId sleepTimerHandle;
 
 PID_t pid;
 fan_t fan;
+serial_t serial;
 static percent_t fan_speed_percent;
 static percent_t fan_min_speed_percent;
 static percent_t fan_max_speed_percent;
@@ -44,6 +46,8 @@ static percent_t fan_max_speed_percent;
 void sleeptimerCallback(void const * argument);
 
 void app_init() {
+
+    serial_init(&serial);
 
     /*
      * Enable additional exceptions, so they don't escalate to

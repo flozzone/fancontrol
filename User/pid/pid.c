@@ -6,14 +6,10 @@
 
 #include "pid.h"
 #include "ds18b20/ds18b20.h"
-#include "tim.h"
-#include "usart.h"
 #include "fan/fan.h"
 #include "app.h"
 
 #define PID_FLOAT_PRECISION 10
-
-char testdata[] = "data\n\r";
 
 void PID_Init(PID_t *pid) {
     pid->integral = 0;
@@ -30,8 +26,6 @@ int PID_process(PID_t *pid, float _in, float _setPoint, speed_t *out) {
     int32_t new_integral;
     float derivative;
     uint32_t new_out;
-
-    HAL_UART_Transmit(&huart1, testdata, strlen(testdata), 1000);
 
     in = (int) (_in * PID_FLOAT_PRECISION);
     setPoint = (int) (_setPoint * PID_FLOAT_PRECISION);
