@@ -35,5 +35,7 @@ extern menu_page_t *menu_pages[];
 void set_control_mode(uint8_t mode);
 
 void menu_display_percent(char *buf, const uint8_t buf_len, percent_t percent);
+uint8_t menu_fan_speed_as_percent(speed_t speed);
+uint16_t menu_fan_percent_as_speed(percent_t percent);
 
 #endif //FANCONTROL_USER_MENU_H

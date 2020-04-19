@@ -10,6 +10,8 @@
 #include "app.h"
 #include "user_menu.h"
 
+#define UNUSED(X) (void)X
+
 int fan_edit_cb(menu_item_t *item);
 int fan_disp_cb(menu_item_t *item, char *_buf, int _buf_size);
 int fan_min_edit_cb(menu_item_t *item);
@@ -173,34 +175,45 @@ menu_page_t *menu_pages[] = {
         NULL
 };
 
+uint8_t menu_fan_speed_as_percent(speed_t speed) {
+    return (speed - FAN_RANGE_MIN)/((FAN_RANGE_MAX - FAN_RANGE_MIN)/100);
+}
+
+uint16_t menu_fan_percent_as_speed(percent_t percent) {
+    return ((FAN_RANGE_MAX - FAN_RANGE_MIN)/100 * percent) + FAN_RANGE_MIN;
+}
+
 void menu_display_fan_speed_as_percent(char *_buf, const uint8_t _buf_size, speed_t speed) {
-    utoa((speed - FAN_RANGE_MIN)/((FAN_RANGE_MAX - FAN_RANGE_MIN)/100), _buf, 10);
+    utoa(menu_fan_speed_as_percent(speed), _buf, 10);
     uint8_t len = strlen(_buf);
     strncpy(&_buf[len], " %", _buf_size - len);
 }
 
 int fan_edit_cb(menu_item_t *item) {
-    fan_set_speed(&fan, ((FAN_RANGE_MAX - FAN_RANGE_MIN)/100 * *item->data_uint) + FAN_RANGE_MIN);
+    fan_set_speed(&fan, menu_fan_percent_as_speed(*item->data_uint));
 }
 
 int fan_disp_cb(menu_item_t *item, char *_buf, int _buf_size) {
+    UNUSED(item);
     speed_t speed = fan_get_speed(&fan);
     menu_display_fan_speed_as_percent(_buf, _buf_size, speed);
 }
 
 int fan_min_edit_cb(menu_item_t *item) {
-    pid.out_min = ((FAN_RANGE_MAX - FAN_RANGE_MIN)/100 * *item->data_uint) + FAN_RANGE_MIN;
+    pid.out_min = menu_fan_percent_as_speed(*item->data_uint);
 }
 
 int fan_min_disp_cb(menu_item_t *item, char *_buf, int _buf_size) {
+    UNUSED(item);
     menu_display_fan_speed_as_percent(_buf, _buf_size, pid.out_min);
 }
 
 int fan_max_edit_cb(menu_item_t *item) {
-    pid.out_max = ((FAN_RANGE_MAX - FAN_RANGE_MIN)/100 * *item->data_uint) + FAN_RANGE_MIN;
+    pid.out_max = menu_fan_percent_as_speed(*item->data_uint);
 }
 
 int fan_max_disp_cb(menu_item_t *item, char *_buf, int _buf_size) {
+    UNUSED(item);
     menu_display_fan_speed_as_percent(_buf, _buf_size, pid.out_max);
 }
 
