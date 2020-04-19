@@ -6,8 +6,10 @@
 #define FANCONTROL_APP_H
 
 #include <fan/fan.h>
+#include <pid/pid.h>
 
 extern fan_t fan;
+extern PID_t pid;
 
 void app_init();
 void app_run(void);

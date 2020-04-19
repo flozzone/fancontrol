@@ -7,6 +7,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <ltoa.h>
+#include <app.h>
 
 menu_t menu;
 
@@ -128,6 +129,12 @@ char *menu_item_print (menu_item_t *item, char *buf, uint8_t buf_len) {
                 strncpy(buf, "NA", buf_len);
                 break;
             }
+            case MENU_TYPE_PERCENT: {
+                utoa(*item->data_uint, buf, 10);
+                uint8_t len = strlen(buf);
+                strncpy(buf[len], " %", 3);
+                break;
+            }
             default: {
                 strncpy(buf, "NA", buf_len);
                 break;
@@ -142,82 +149,98 @@ void menu_item_edit(menu_t *menu, int16_t incdec) {
     menu_item_t *item = menu_current_item(menu);
 
     if (item->editable) {
-        if (item->item_edit_cb != NULL) {
-            item->item_edit_cb(item, incdec);
-        } else {
-            switch (item->type) {
-                case MENU_TYPE_BOOL:
-                case MENU_TYPE_ENUM:
-                case MENU_TYPE_UINT: {
-                    uint16_t val = (*item->data_uint) + incdec;
-                    if (val < item->min_uint) {
-                        *item->data_uint = item->min_uint;
-                    } else if (val > item->max_uint) {
-                        *item->data_uint = item->max_uint;
-                    } else {
-                        *item->data_uint = val;
-                    }
-                    break;
+        switch (item->type) {
+            case MENU_TYPE_BOOL:
+            case MENU_TYPE_ENUM:
+            case MENU_TYPE_UINT: {
+                uint16_t val = (*item->data_uint) + incdec;
+                if (val < item->min_uint) {
+                    *item->data_uint = item->min_uint;
+                } else if (val > item->max_uint) {
+                    *item->data_uint = item->max_uint;
+                } else {
+                    *item->data_uint = val;
                 }
-                case MENU_TYPE_ULONG: {
-                    uint32_t val = (*item->data_ulong) + incdec;
-                    if (val < item->min_ulong) {
-                        *item->data_ulong = item->min_ulong;
-                    } else if (val > item->max_ulong) {
-                        *item->data_ulong = item->max_ulong;
-                    } else {
-                        *item->data_ulong = val;
-                    }
-                    break;
-                }
-                case MENU_TYPE_INT: {
-                    int16_t val = (*item->data_int) + incdec;
-                    if (val < item->min_int) {
-                        *item->data_int = item->min_int;
-                    } else if (val > item->max_int) {
-                        *item->data_int = item->max_int;
-                    } else {
-                        *item->data_int = val;
-                    }
-                    break;
-                }
-                case MENU_TYPE_LONG: {
-                    int32_t val = (*item->data_long) + incdec;
-                    if (val < item->min_long) {
-                        *item->data_long = item->min_long;
-                    } else if (val > item->max_long) {
-                        *item->data_long = item->max_long;
-                    } else {
-                        *item->data_long = val;
-                    }
-                    break;
-                }
-                case MENU_TYPE_DOUBLE: {
-                    double val = (*item->data_double) + incdec;
-                    if (val < item->min_double) {
-                        *item->data_double = item->min_double;
-                    } else if (val > item->max_double) {
-                        *item->data_double = item->max_double;
-                    } else {
-                        *item->data_double = val;
-                    }
-                    break;
-                }
-                case MENU_TYPE_FLOAT: {
-                    float val = (*item->data_float) + 0.1F * incdec;
-                    if (val < item->min_float) {
-                        *item->data_float = item->min_float;
-                    } else if (val > item->max_float) {
-                        *item->data_float = item->max_float;
-                    } else {
-                        *item->data_float = val;
-                    }
-                    break;
-                }
-                default: {
-                    //TODO: handle error
-                }
+                break;
             }
+            case MENU_TYPE_ULONG: {
+                uint32_t val = (*item->data_ulong) + incdec;
+                if (val < item->min_ulong) {
+                    *item->data_ulong = item->min_ulong;
+                } else if (val > item->max_ulong) {
+                    *item->data_ulong = item->max_ulong;
+                } else {
+                    *item->data_ulong = val;
+                }
+                break;
+            }
+            case MENU_TYPE_INT: {
+                int16_t val = (*item->data_int) + incdec;
+                if (val < item->min_int) {
+                    *item->data_int = item->min_int;
+                } else if (val > item->max_int) {
+                    *item->data_int = item->max_int;
+                } else {
+                    *item->data_int = val;
+                }
+                break;
+            }
+            case MENU_TYPE_LONG: {
+                int32_t val = (*item->data_long) + incdec;
+                if (val < item->min_long) {
+                    *item->data_long = item->min_long;
+                } else if (val > item->max_long) {
+                    *item->data_long = item->max_long;
+                } else {
+                    *item->data_long = val;
+                }
+                break;
+            }
+            case MENU_TYPE_DOUBLE: {
+                double val = (*item->data_double) + incdec;
+                if (val < item->min_double) {
+                    *item->data_double = item->min_double;
+                } else if (val > item->max_double) {
+                    *item->data_double = item->max_double;
+                } else {
+                    *item->data_double = val;
+                }
+                break;
+            }
+            case MENU_TYPE_FLOAT: {
+                float val = (*item->data_float) + 0.1F * incdec;
+                if (val < item->min_float) {
+                    *item->data_float = item->min_float;
+                } else if (val > item->max_float) {
+                    *item->data_float = item->max_float;
+                } else {
+                    *item->data_float = val;
+                }
+                break;
+            }
+            case MENU_TYPE_PERCENT: {
+                int16_t val = *item->data_uint + incdec;
+                percent_t percent;
+
+                if (val < item->min_uint) {
+                    percent = 0;
+                } else if (val > item->max_uint) {
+                    percent = 100;
+                } else {
+                    percent = val;
+                }
+
+                *item->data_uint = percent;
+
+                break;
+            }
+            default: {
+                //TODO: handle error
+            }
+        }
+
+        if (item->item_edit_cb != NULL) {
+            item->item_edit_cb(item);
         }
     }
 }

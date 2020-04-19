@@ -34,4 +34,6 @@ enum page_pid_stat_e {
 extern menu_page_t *menu_pages[];
 void set_control_mode(uint8_t mode);
 
+void menu_display_percent(char *buf, const uint8_t buf_len, percent_t percent);
+
 #endif //FANCONTROL_USER_MENU_H

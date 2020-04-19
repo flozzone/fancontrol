@@ -13,7 +13,6 @@
 #define FAN_RANGE (FAN_RANGE_MAX - FAN_RANGE_MIN)
 
 typedef int16_t speed_t;
-typedef uint16_t percent_t;
 
 typedef struct {
     bool inverted;

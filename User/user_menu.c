@@ -3,6 +3,7 @@
 //
 #include <stdlib.h>
 #include <float.h>
+#include <string.h>
 
 #include "fan/fan.h"
 #include "pid/pid.h"
@@ -10,9 +11,13 @@
 #include "user_menu.h"
 
 void set_control_mode(uint8_t mode);
-int fan_edit_cb(menu_item_t *item, int16_t incdec);
-int fan_disp_cb(menu_item_t *item, char *buffer, int n);
-int mode_edit_cb(menu_item_t *item, int16_t incdec);
+int fan_edit_cb(menu_item_t *item);
+int fan_disp_cb(menu_item_t *item, char *buf, int n);
+int fan_min_edit_cb(menu_item_t *item);
+int fan_min_disp_cb(menu_item_t *item, char *buf, int n);
+int fan_max_edit_cb(menu_item_t *item);
+int fan_max_disp_cb(menu_item_t *item, char *buf, int n);
+int mode_edit_cb(menu_item_t *item);
 
 char *mode_choices[8] = {"AUTO", "MANUAL"};
 
@@ -44,7 +49,7 @@ menu_page_t page1 = {
                 },
                 {
                         .label = "Fan [%]",
-                        .type = MENU_TYPE_UINT,
+                        .type = MENU_TYPE_PERCENT,
                         .editable = true,
                         .min_uint = 0,
                         .max_uint = 100,
@@ -89,17 +94,21 @@ menu_page_t page2 = {
                 },
                 {
                         .label = "MIN",
-                        .type = MENU_TYPE_INT,
+                        .type = MENU_TYPE_PERCENT,
                         .editable = true,
                         .min_int = 0,
-                        .max_int = INT16_MAX
+                        .max_int = 100,
+                        .item_edit_cb = fan_min_edit_cb,
+                        .item_display_cb = fan_min_disp_cb
                 },
                 {
                         .label = "MAX",
-                        .type = MENU_TYPE_INT,
+                        .type = MENU_TYPE_PERCENT,
                         .editable = true,
                         .min_int = 0,
-                        .max_int = INT16_MAX
+                        .max_int = 100,
+                        .item_edit_cb = fan_max_edit_cb,
+                        .item_display_cb = fan_max_disp_cb
                 },
                 {
                         .type = MENU_TYPE_NONE
@@ -158,26 +167,35 @@ menu_page_t *menu_pages[] = {
         NULL
 };
 
-
-int fan_edit_cb(menu_item_t *item, int16_t incdec) {
-    int16_t val = *item->data_uint + incdec;
-    percent_t percent;
-
-    if (val < item->min_uint) {
-        percent = item->min_uint;
-    } else if (val > item->max_uint) {
-        percent = item->max_uint;
-    } else {
-        percent = val;
-    }
-
-    fan_set_speed(&fan, ((FAN_RANGE_MAX - FAN_RANGE_MIN)/100 * percent) + FAN_RANGE_MIN);
+void menu_display_fan_speed_as_percent(char *_buf, const uint8_t _buf_size, speed_t speed) {
+    utoa((speed - FAN_RANGE_MIN)/((FAN_RANGE_MAX - FAN_RANGE_MIN)/100), _buf, 10);
+    uint8_t len = strlen(_buf);
+    strncpy(&_buf[len], " %", _buf_size - len);
 }
 
-int fan_disp_cb(menu_item_t *item, char *buffer, int n) {
+int fan_edit_cb(menu_item_t *item) {
+    fan_set_speed(&fan, ((FAN_RANGE_MAX - FAN_RANGE_MIN)/100 * *item->data_uint) + FAN_RANGE_MIN);
+}
+
+int fan_disp_cb(menu_item_t *item, char *_buf, int _buf_size) {
     speed_t speed = fan_get_speed(&fan);
-    percent_t percent = (speed - FAN_RANGE_MIN)/((FAN_RANGE_MAX - FAN_RANGE_MIN)/100);
-    utoa(percent, buffer, 10);
+    menu_display_fan_speed_as_percent(_buf, _buf_size, speed);
+}
+
+int fan_min_edit_cb(menu_item_t *item) {
+    pid.out_min = ((FAN_RANGE_MAX - FAN_RANGE_MIN)/100 * *item->data_uint) + FAN_RANGE_MIN;
+}
+
+int fan_min_disp_cb(menu_item_t *item, char *_buf, int _buf_size) {
+    menu_display_fan_speed_as_percent(_buf, _buf_size, pid.out_min);
+}
+
+int fan_max_edit_cb(menu_item_t *item) {
+    pid.out_max = ((FAN_RANGE_MAX - FAN_RANGE_MIN)/100 * *item->data_uint) + FAN_RANGE_MIN;
+}
+
+int fan_max_disp_cb(menu_item_t *item, char *_buf, int _buf_size) {
+    menu_display_fan_speed_as_percent(_buf, _buf_size, pid.out_max);
 }
 
 void set_control_mode(uint8_t mode) {
@@ -195,9 +213,11 @@ void set_control_mode(uint8_t mode) {
     }
 }
 
-int mode_edit_cb(menu_item_t *item, int16_t incdec) {
 
-    *item->data_uint += incdec;
+
+int mode_edit_cb(menu_item_t *item) {
+
+    /**item->data_uint += incdec;
 
     int16_t val = *item->data_uint + incdec;
 
@@ -206,6 +226,8 @@ int mode_edit_cb(menu_item_t *item, int16_t incdec) {
     } else if (val > item->max_uint) {
         set_control_mode(item->min_uint);
     } else {
-        set_control_mode(val);
-    }
+
+    }*/
+
+    set_control_mode(*item->data_uint);
 }

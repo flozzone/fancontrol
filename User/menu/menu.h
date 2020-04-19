@@ -7,6 +7,7 @@
 
 #include <stdbool.h>
 #include <stdint-gcc.h>
+#include <fan/fan.h>
 
 #define MENU_MAX_LABEL 14
 #define MENU_MAX_TITLE 16
@@ -23,12 +24,16 @@ typedef enum menu_item_type {
     MENU_TYPE_ENUM,
     MENU_TYPE_BOOL,
     MENU_TYPE_LONG,
-    MENU_TYPE_ULONG
+    MENU_TYPE_ULONG,
+    MENU_TYPE_PERCENT
 } menu_item_type_e;
+
+typedef uint16_t percent_t;
+typedef uint16_t enum_t;
 
 typedef struct menu_item_s menu_item_t;
 
-typedef int (*menu_item_id_cb_t)(menu_item_t *item, int16_t incdec);
+typedef int (*menu_item_id_cb_t)(menu_item_t *item);
 typedef int (*menu_item_display_cb_t)(menu_item_t *item, char *buffer, int n);
 
 typedef struct menu_item_s {

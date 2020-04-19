@@ -35,9 +35,11 @@ static osTimerId sleepTimerHandle;
 
 
 
-static PID_t pid;
+PID_t pid;
 fan_t fan;
 static percent_t fan_speed_percent;
+static percent_t fan_min_speed_percent;
+static percent_t fan_max_speed_percent;
 
 void sleeptimerCallback(void const * argument);
 
@@ -67,9 +69,14 @@ void app_init() {
     PID_Init(&pid);
     fan_init(&fan);
 
-    pid.setPoint = 15;
+    pid.setPoint = 21.1F;
+    fan_max_speed_percent = 100;
+    fan_min_speed_percent = 14;
+
     pid.out_min = 2050;
     pid.out_max = FAN_RANGE_MAX;
+
+
     pid.Kp = 100;
     pid.Ki = 8;
     pid.Kd = 1;
@@ -88,8 +95,12 @@ void app_init() {
     menu_pages[PAGE2]->items[0].data_int = &pid.Kp;
     menu_pages[PAGE2]->items[1].data_int = &pid.Ki;
     menu_pages[PAGE2]->items[2].data_int = &pid.Kd;
-    menu_pages[PAGE2]->items[3].data_int = &pid.out_min;
-    menu_pages[PAGE2]->items[4].data_int = &pid.out_max;
+    menu_pages[PAGE2]->items[3].data_uint = &fan_min_speed_percent;
+    menu_pages[PAGE2]->items[3].item_edit_cb(&menu_pages[PAGE2]->items[3]);
+    menu_pages[PAGE2]->items[4].data_uint = &fan_max_speed_percent;
+    menu_pages[PAGE2]->items[4].item_edit_cb(&menu_pages[PAGE2]->items[4]);
+
+
 
     // page 3 - Settings
     menu_pages[PAGE3]->items[0].data_int = &pid.dt;
