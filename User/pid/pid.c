@@ -36,11 +36,7 @@ int PID_process(PID_t *pid, float _in, float _setPoint, speed_t *out) {
     in = (int) (_in * PID_FLOAT_PRECISION);
     setPoint = (int) (_setPoint * PID_FLOAT_PRECISION);
 
-    if (!pid->inverted) {
-        error = in - setPoint;
-    } else {
-        error = setPoint - in;
-    }
+    error = in - setPoint;
 
     new_integral = pid->integral + error * pid->dt;
     derivative = (error - pid->prevError)/pid->dt;
@@ -82,9 +78,6 @@ void TaskPID(void const * _pid) {
         data.temp = ds18b20[0].Temperature;
         data.setPoint = pid->setPoint;
         data.pwm = pwm;
-        //HAL_StatusTypeDef ret = HAL_UART_Transmit(&huart2, (char *) &data, sizeof(data_serial_t), 500);
-
-        //printf("TESTasdasdasd");
 
         osDelay(pid->dt * 1000);
     }

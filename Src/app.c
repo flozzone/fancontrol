@@ -73,15 +73,11 @@ void app_init() {
     fan_max_speed_percent = 100;
     fan_min_speed_percent = 14;
 
-    pid.out_min = 2050;
-    pid.out_max = FAN_RANGE_MAX;
-
 
     pid.Kp = 100;
     pid.Ki = 8;
     pid.Kd = 1;
     pid.dt = 2;
-    pid.inverted = false;
     OLED_autoSleepEnabled = false;
 
     // page 1 - Fan control
@@ -99,7 +95,7 @@ void app_init() {
     menu_pages[PAGE2]->items[3].item_edit_cb(&menu_pages[PAGE2]->items[3]);
     menu_pages[PAGE2]->items[4].data_uint = &fan_max_speed_percent;
     menu_pages[PAGE2]->items[4].item_edit_cb(&menu_pages[PAGE2]->items[4]);
-
+    menu_pages[PAGE2]->items[5].data_bool = &fan.inverted;
 
 
     // page 3 - Settings

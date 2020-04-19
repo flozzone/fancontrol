@@ -7,13 +7,14 @@
 
 #define USE_U8X8
 
-#include "oled_task.h"
-#include "oled_driver.h"
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <stdbool.h>
 
+#include "oled_driver.h"
 
+void oled_draw(void);
 extern bool OLED_autoSleepEnabled;
 extern uint32_t OLED_autoSleepAfterSec;
 

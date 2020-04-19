@@ -26,7 +26,6 @@ typedef struct {
 
     int16_t out_min;
     int16_t out_max;
-    bool inverted;
 
     uint16_t mode;
 

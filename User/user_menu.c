@@ -21,7 +21,7 @@ int mode_edit_cb(menu_item_t *item);
 char *mode_choices[8] = {"AUTO", "MANUAL"};
 
 menu_page_t page1 = {
-        .title = "Fan-Control20",
+        .title = "Fan-Control",
         .items = {
                 {
                         .label = "Mode",
@@ -108,6 +108,13 @@ menu_page_t page2 = {
                         .max_int = 100,
                         .item_edit_cb = fan_max_edit_cb,
                         .item_display_cb = fan_max_disp_cb
+                },
+                {
+                        .label = "INV",
+                        .type = MENU_TYPE_BOOL,
+                        .editable = true,
+                        .min_uint = 0,
+                        .max_uint = 1
                 },
                 {
                         .type = MENU_TYPE_NONE

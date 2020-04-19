@@ -78,6 +78,7 @@ void menu_item_prev(menu_t *menu) {
 menu_page_t *menu_cur_page(menu_t *menu) {
     return menu->pages[menu->cur_page];
 }
+
 menu_item_t *menu_current_item(menu_t *menu) {
     return &menu->pages[menu->cur_page]->items[menu->cur_item];
 }
@@ -122,7 +123,6 @@ char *menu_item_print (menu_item_t *item, char *buf, uint8_t buf_len) {
                 } else {
                    strncpy(buf, "ON", buf_len);
                 }
-                //strncpy(buf, "NA", buf_len);
                 break;
             }
             case MENU_TYPE_PERCENT: {
