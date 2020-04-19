@@ -113,20 +113,16 @@ char *menu_item_print (menu_item_t *item, char *buf, uint8_t buf_len) {
                 break;
             }
             case MENU_TYPE_ENUM: {
-                // TODO: remove this workaround: check for choices index and number of items
-                if (*item->data_uint < 2) {
-                    //val_ptr = item->choices[*item->data_uint];
-                    strncpy(buf, item->choices[*item->data_uint], buf_len);
-                }
+                strncpy(buf, item->choices[*item->data_uint], buf_len);
                 break;
             }
             case MENU_TYPE_BOOL: {
-                /*       if (*item->data_bool == false) {
-                           strcpy(buf, "OFF");
-                       } else {
-                           strcpy(buf, "ON");
-                       }*/
-                strncpy(buf, "NA", buf_len);
+                if (*item->data_bool == false) {
+                   strncpy(buf, "OFF", buf_len);
+                } else {
+                   strncpy(buf, "ON", buf_len);
+                }
+                //strncpy(buf, "NA", buf_len);
                 break;
             }
             case MENU_TYPE_PERCENT: {
@@ -141,6 +137,9 @@ char *menu_item_print (menu_item_t *item, char *buf, uint8_t buf_len) {
             }
         }
     }
+
+    // ensure buffer is null terminated
+    buf[buf_len-1] = '\0';
 
     return buf;
 }

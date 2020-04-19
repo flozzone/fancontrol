@@ -37,7 +37,7 @@ void oled_draw(void) {
     int item_nr;
     menu_item_t *item;
     uint8_t val_x_offset = menu.pages[menu.cur_page]->max_label_length + 2;
-    uint8_t allowed_val_len = OLED_MAX_CHARS_ON_LINE - val_x_offset;
+    uint8_t allowed_val_len = OLED_MAX_CHARS_ON_LINE - val_x_offset + 1;
 
     if (menu.page_changed) {
         OLEDClear();
