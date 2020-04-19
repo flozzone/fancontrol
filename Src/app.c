@@ -65,7 +65,7 @@ void app_init() {
 
     OLEDInit();
     Ds18b20_Init(osPriorityNormal);
-    DHT22_Init();
+    //DHT22_Init();
     PID_Init(&pid);
     fan_init(&fan);
 
@@ -138,7 +138,13 @@ uint16_t get_increment(uint16_t num) {
 }
 
 bool read_keypad(void) {
-    bool key_pressed = ((GPIOC->IDR & (BUTTON_BACK_Pin | BUTTON_OK_Pin)) || (GPIOB->IDR & (BUTTON_UP_Pin | BUTTON_DOWN_Pin | BUTTON_LEFT_Pin | BUTTON_RIGHT_Pin))) ? true : false;
+    bool key_pressed = (HAL_GPIO_ReadPin(BUTTON_OK_GPIO_Port, BUTTON_OK_Pin) == GPIO_PIN_SET) || \
+                        (HAL_GPIO_ReadPin(BUTTON_BACK_GPIO_Port, BUTTON_BACK_Pin) == GPIO_PIN_SET) || \
+                        (HAL_GPIO_ReadPin(BUTTON_LEFT_GPIO_Port, BUTTON_LEFT_Pin) == GPIO_PIN_SET) || \
+                        (HAL_GPIO_ReadPin(BUTTON_RIGHT_GPIO_Port, BUTTON_RIGHT_Pin) == GPIO_PIN_SET) || \
+                        (HAL_GPIO_ReadPin(BUTTON_UP_GPIO_Port, BUTTON_UP_Pin) == GPIO_PIN_SET) || \
+                        (HAL_GPIO_ReadPin(BUTTON_DOWN_GPIO_Port, BUTTON_DOWN_Pin) == GPIO_PIN_SET);
+
     if ( key_pressed && !is_sleeping ) {
         if (HAL_GPIO_ReadPin(BUTTON_OK_GPIO_Port, BUTTON_OK_Pin) == GPIO_PIN_SET) {
             if (menu_current_item(&menu)->editable) {
