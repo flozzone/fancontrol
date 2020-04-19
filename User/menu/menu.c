@@ -132,7 +132,7 @@ char *menu_item_print (menu_item_t *item, char *buf, uint8_t buf_len) {
             case MENU_TYPE_PERCENT: {
                 utoa(*item->data_uint, buf, 10);
                 uint8_t len = strlen(buf);
-                strncpy(buf[len], " %", 3);
+                strncpy(&buf[len], " %", 3);
                 break;
             }
             default: {

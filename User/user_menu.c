@@ -10,13 +10,12 @@
 #include "app.h"
 #include "user_menu.h"
 
-void set_control_mode(uint8_t mode);
 int fan_edit_cb(menu_item_t *item);
-int fan_disp_cb(menu_item_t *item, char *buf, int n);
+int fan_disp_cb(menu_item_t *item, char *_buf, int _buf_size);
 int fan_min_edit_cb(menu_item_t *item);
-int fan_min_disp_cb(menu_item_t *item, char *buf, int n);
+int fan_min_disp_cb(menu_item_t *item, char *_buf, int _buf_size);
 int fan_max_edit_cb(menu_item_t *item);
-int fan_max_disp_cb(menu_item_t *item, char *buf, int n);
+int fan_max_disp_cb(menu_item_t *item, char *_buf, int _buf_size);
 int mode_edit_cb(menu_item_t *item);
 
 char *mode_choices[8] = {"AUTO", "MANUAL"};
@@ -48,7 +47,7 @@ menu_page_t page1 = {
                         .max_float = 400
                 },
                 {
-                        .label = "Fan [%]",
+                        .label = "Fan",
                         .type = MENU_TYPE_PERCENT,
                         .editable = true,
                         .min_uint = 0,
@@ -216,18 +215,5 @@ void set_control_mode(uint8_t mode) {
 
 
 int mode_edit_cb(menu_item_t *item) {
-
-    /**item->data_uint += incdec;
-
-    int16_t val = *item->data_uint + incdec;
-
-    if (val < item->min_uint) {
-        set_control_mode(item->max_uint);
-    } else if (val > item->max_uint) {
-        set_control_mode(item->min_uint);
-    } else {
-
-    }*/
-
     set_control_mode(*item->data_uint);
 }
