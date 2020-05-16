@@ -134,7 +134,7 @@ uint16_t get_increment(uint16_t num) {
         case 3: ret = 2; break;
         case 4: ret = 5; break;
         default: {
-            ret = pow(10, num - 4);
+            ret = 1 << num - 4;
         }
     }
 
