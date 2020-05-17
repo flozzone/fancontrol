@@ -4,7 +4,6 @@
 
 #include <math.h>
 #include <stdint.h>
-#include <serial.h>
 
 #include "app.h"
 
@@ -38,7 +37,6 @@ static osTimerId sleepTimerHandle;
 
 PID_t pid;
 fan_t fan;
-serial_t serial;
 static percent_t fan_speed_percent;
 static percent_t fan_min_speed_percent;
 static percent_t fan_max_speed_percent;
@@ -46,8 +44,6 @@ static percent_t fan_max_speed_percent;
 void sleeptimerCallback(void const * argument);
 
 void app_init() {
-
-    serial_init(&serial);
 
     /*
      * Enable additional exceptions, so they don't escalate to
@@ -61,11 +57,8 @@ void app_init() {
     init.Mode = GPIO_MODE_OUTPUT_PP;
     init.Pull = GPIO_NOPULL;
     init.Speed = GPIO_SPEED_FREQ_HIGH;
-    init.Pin = DC_EN_Pin;
-    HAL_GPIO_Init(DC_EN_GPIO_Port,&init);
 
     HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
-    HAL_GPIO_WritePin(DC_EN_GPIO_Port, DC_EN_Pin, GPIO_PIN_SET);
 
     OLEDInit();
     Ds18b20_Init(osPriorityNormal);

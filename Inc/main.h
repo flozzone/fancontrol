@@ -58,22 +58,20 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define BUTTON_BACK_Pin GPIO_PIN_14
+#define BUTTON_BACK_GPIO_Port GPIOC
+#define BUTTON_OK_Pin GPIO_PIN_15
+#define BUTTON_OK_GPIO_Port GPIOC
 #define PWM_OUT_Pin GPIO_PIN_0
 #define PWM_OUT_GPIO_Port GPIOA
 #define DS18B20_Pin GPIO_PIN_1
 #define DS18B20_GPIO_Port GPIOA
-#define BUTTON_OK_Pin GPIO_PIN_3
-#define BUTTON_OK_GPIO_Port GPIOA
-#define DC_EN_Pin GPIO_PIN_4
-#define DC_EN_GPIO_Port GPIOA
 #define OLED_SCK_Pin GPIO_PIN_5
 #define OLED_SCK_GPIO_Port GPIOA
 #define OLED_MOSI_Pin GPIO_PIN_7
 #define OLED_MOSI_GPIO_Port GPIOA
 #define BUTTON_UP_Pin GPIO_PIN_0
 #define BUTTON_UP_GPIO_Port GPIOB
-#define BUTTON_BACK_Pin GPIO_PIN_1
-#define BUTTON_BACK_GPIO_Port GPIOB
 #define DHT22_Pin GPIO_PIN_11
 #define DHT22_GPIO_Port GPIOB
 #define BUTTON_LEFT_Pin GPIO_PIN_13
@@ -84,7 +82,7 @@ void Error_Handler(void);
 #define BUTTON_DOWN_GPIO_Port GPIOB
 #define OLED_DC_Pin GPIO_PIN_8
 #define OLED_DC_GPIO_Port GPIOA
-#define OLED_RST_Pin GPIO_PIN_15
+#define OLED_RST_Pin GPIO_PIN_9
 #define OLED_RST_GPIO_Port GPIOA
 #define OLED_CS_Pin GPIO_PIN_6
 #define OLED_CS_GPIO_Port GPIOB
