@@ -1,3 +1,8 @@
+build/*
+.vscode/*
+trace*.csv
+.~lock.*
+
 .idea
 
 # Prerequisites
