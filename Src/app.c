@@ -66,16 +66,16 @@ void app_init() {
     PID_Init(&pid);
     fan_init(&fan);
 
-    pid.setPoint = 21.1F;
-    fan_max_speed_percent = 100;
-    fan_min_speed_percent = 14;
-
+    pid.setPoint = 30.0F;
+    fan_max_speed_percent = 70;
+    fan_min_speed_percent = 30;
+    fan.inverted = true;
 
     pid.Kp = 100;
     pid.Ki = 8;
     pid.Kd = 1;
     pid.dt = 2;
-    OLED_autoSleepEnabled = false;
+    OLED_autoSleepEnabled = true;
 
     // page 1 - Fan control
     menu_pages[PAGE1]->items[PAGE1_MODE].data_uint = &pid.mode;
