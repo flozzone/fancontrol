@@ -207,7 +207,7 @@ bool read_keypad(void) {
 void app_run(void) {
     is_sleeping = false;
 
-    if (xTimerChangePeriod(sleepTimerHandle, OLED_autoSleepAfterSec, 10) != pdPASS )
+    if (xTimerChangePeriod(sleepTimerHandle, OLED_autoSleepAfterSec * 1000, 10) != pdPASS )
     {
         /* The reset command was not executed successfully.  Take appropriate
         action here. */
