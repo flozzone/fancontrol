@@ -14,9 +14,11 @@
 #define OLED_MAX_CHARS_ON_LINE 16
 #define OLED_BUF_SIZE OLED_MAX_CHARS_ON_LINE
 
+#define OLED_SLEEP_AFTER_SEC_DEFAULT 15
+
 static char buf[OLED_BUF_SIZE];
 bool OLED_autoSleepEnabled = true;
-uint32_t OLED_autoSleepAfterSec = 15;
+uint32_t OLED_autoSleepAfterSec = OLED_SLEEP_AFTER_SEC_DEFAULT;
 
 void OLEDInit(void) {
     OLEDDriverInit();

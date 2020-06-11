@@ -75,7 +75,9 @@ void app_init() {
     pid.Ki = 8;
     pid.Kd = 1;
     pid.dt = 2;
+
     OLED_autoSleepEnabled = true;
+    OLED_autoSleepAfterSec = 30;
 
     // page 1 - Fan control
     menu_pages[PAGE1]->items[PAGE1_MODE].data_uint = &pid.mode;
